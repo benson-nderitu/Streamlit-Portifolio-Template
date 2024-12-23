@@ -2,7 +2,7 @@
 /* --ST.DIVIDER ---- */
 hr {
     background-image: linear-gradient(to right, #3498db, #2ecc71, #e74c3c, #f1c40f, #34495e, #f39c12);
-    padding: 0.7px;
+    padding: 1px;
 }
 
 /*====NAVBAR CSS= DO NOT CHANGE THESE VALUES ======*/
@@ -125,4 +125,11 @@ hr {
 .st-key-portfolio_read_more button {
     background-color: red;
     border: none !important;
+}
+
+/* ====== ADMIN PAGE ====== */
+.st-key-NewPortfolioContainer {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 10px;
 }

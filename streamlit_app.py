@@ -5,6 +5,7 @@ from streamlit_float import *
 
 from about import resume_about
 from contact import contact
+from data.database import create_database
 from portifolio import portifolio_projects
 
 st.set_page_config(
@@ -13,6 +14,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+
 
 # --------------Get THEME COLORS ----------------
 backgroundColor = st.get_option("theme.backgroundColor")
@@ -76,6 +78,7 @@ with open(css_file) as f:
 # ================================================================
 @st.fragment()
 def main():
+    create_database()  # Create databases if it does not exist
     # =======NAVIGATION 1: NAVBAR from Streamlit Option Menu ===============
 
     from streamlit_option_menu import option_menu
@@ -88,22 +91,22 @@ def main():
         with locol:
             with st.container(key="LOGOContainer"):
 
-                ## 1. DYNAMIC COLORS
-                # st.markdown(
-                #     f'<h3 style="color:{primaryColor};">My <span style="color:orange;">Logo</span></h3>',
-                #     unsafe_allow_html=True,
-                # )
+                # 1. DYNAMIC COLORS
+                st.markdown(
+                    f'<h3 style="color:{primaryColor};">My <span style="color:orange;">Logo</span></h3>',
+                    unsafe_allow_html=True,
+                )
 
                 # st.subheader(":green[MY] :rainbow[LOGO]")  # 2.FIXED COLORS
 
                 # st.image("static/logo1.png")  # 3.LOGO IMAGE
-                st.image("static/logo.png")
+                # st.image("static/logo.png")
 
         with navcol:
             with st.container(key="MenuContainer"):
                 menu_selection = option_menu(
                     None,
-                    ["About Me", "My Portfolio", "Contact Me"],
+                    ["About Me", "My Portfolio", "Contact"],
                     icons=["person-circle", "laptop", "telephone"],
                     menu_icon="cast",
                     default_index=0,
@@ -127,7 +130,7 @@ def main():
                         },
                     },
                 )
-
+    st.spinner()
     # Handle menu selection
     if menu_selection == "About Me":
         resume_about()
@@ -135,7 +138,7 @@ def main():
     elif menu_selection == "My Portfolio":
         portifolio_projects()
 
-    elif menu_selection == "Contact Me":
+    elif menu_selection == "Contact":
         contact()
 
     menu_container.float(

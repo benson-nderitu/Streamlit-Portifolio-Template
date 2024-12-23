@@ -1,13 +1,15 @@
+import os
 import time
 from datetime import datetime
 
 import streamlit as st
 import streamlit_antd_components as sac
 
-from data.alldata import get_project_cards
+from data.alldata import fetch_profile, get_project_cards
 from portifolio import carousel_with_autoslide
 
 primary_color = st.get_option("theme.primaryColor")
+
 
 # Define a reusable functions
 def styled_title(normal_text, styled_text, styled_color="blue"):
@@ -32,6 +34,17 @@ def styled_title(normal_text, styled_text, styled_color="blue"):
 
 # styled_title("Welcome to", "Streamlit", "red")
 # styled_title("Powered by", "Python", "purple")
+# Fetch current profile data
+profile = fetch_profile()
+(
+    name,
+    description,
+    profile_image,
+    introduction,
+    about_me_description,
+    about_me_closingTag,
+    about_me_video,
+) = profile
 
 
 @st.fragment()
@@ -40,15 +53,11 @@ def resume_about():
     @st.fragment
     def heroprofile():
         with st.container(key="heroContainer"):
-            NAME = "John Doe"
-            DESCRIPTION = """
-            Senior Data Analyst, assisting enterprises by supporting data-driven decision-making.
-            """
             col1, col2 = st.columns(2, gap="small")
             with col1:
                 with st.container(key="CTAContainer"):
-                    st.title(NAME)
-                    st.write(DESCRIPTION)
+                    st.title(name)
+                    st.write(description)
                     ctacol, cta2col = st.columns([2, 3])
                     with ctacol:
                         if st.button(
@@ -71,7 +80,7 @@ def resume_about():
 
             with col2:
                 with st.container(key="profileImageContainer"):
-                    st.image("static/profile.png", use_container_width=True)
+                    st.image(profile_image, use_container_width=True)
 
     heroprofile()
 
@@ -85,15 +94,9 @@ def resume_about():
 
             with abtdesc:
                 with st.container(key="AboutMeDescriptionContainer"):
-                    st.markdown(
-                        "**Hello!, I'm Benson Nderitu, a data analyst based in Nairobi, Kenya.**"
-                    )
-                    st.write(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                    )
-                    st.markdown(
-                        "**The gateway to advanced learning lies ahead, with a focus on achieving the right balance. Move forward with purpose, enriching your approach step by step. At every beginning, the essentials are key.**"
-                    )
+                    st.markdown(f"**{introduction}**")
+                    st.write(f"{about_me_description}")
+                    st.markdown(f"**{about_me_closingTag}**")
                     viewcol, downloadcol = st.columns(2)
                     with viewcol:
                         if st.button(
