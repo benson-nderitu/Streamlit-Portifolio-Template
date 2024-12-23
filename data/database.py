@@ -76,6 +76,3 @@ def create_database():
         )
     conn.commit()
     conn.close()
-
-
-create_database()  # Create databases if it does not exist
