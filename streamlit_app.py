@@ -2,6 +2,7 @@ from pathlib import Path
 
 import streamlit as st
 from streamlit_float import *
+from streamlit_option_menu import option_menu
 
 from about import resume_about
 from contact import contact
@@ -15,14 +16,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+create_database()  # Create databases if it does not exist
 
-# --------------Get THEME COLORS ----------------
+# -------------------------
+#    Get THEME COLORS
+# -------------------------
 backgroundColor = st.get_option("theme.backgroundColor")
 secondaryBackgroundColor = st.get_option("theme.secondaryBackgroundColor")
 primaryColor = st.get_option("theme.primaryColor")
 
 
-# ---CUSTOM CSS TO REMOVE Sidebar Icon--------------------
+# --------------------------------------------
+#    CUSTOM CSS TO REMOVE Sidebar Icon
+# --------------------------------------------
 
 icon_svg = """
 <style>
@@ -33,7 +39,9 @@ icon_svg = """
 
 st.markdown(f"<div style='color: inherit;'>{icon_svg}</div>", unsafe_allow_html=True)
 
-# ---CUSTOM CSS TO REMOVE PADDING--------------
+# =================================================================
+#     CUSTOM CSS TO REMOVE PADDING
+# =================================================================
 st.markdown(
     """
         <style>
@@ -48,7 +56,10 @@ st.markdown(
             """,
     unsafe_allow_html=True,
 )
-# ----NAVBAR BACKGROUND --------------------------------
+
+# ----------------------------------------
+#        NAVBAR BACKGROUND
+# ----------------------------------------
 st.markdown(
     """
     <style>
@@ -66,41 +77,39 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- PATH SETTINGS ---
+# --------------------------------------
+#     PATH SETTINGS &  LOAD CSS
+# --------------------------------------
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 css_file = current_dir / "styles" / "style.css"
-
-# --- LOAD CSS,   ---
 with open(css_file) as f:
     st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
 
 
-# ================================================================
 @st.fragment()
 def main():
-    create_database()  # Create databases if it does not exist
-    # =======NAVIGATION 1: NAVBAR from Streamlit Option Menu ===============
-
-    from streamlit_option_menu import option_menu
-
+    # ==================================================
+    #   NAVIGATION 1: NAVBAR from Streamlit Option Menu
+    # ==================================================
     float_init()
-    menu_container = st.container(key="TopMenuContainer")  # Create a menu container
-    # Add option menu to menu container
+    menu_container = st.container(key="TopMenuContainer")
     with menu_container:
         locol, navcol, _ = st.columns([1, 3, 1], vertical_alignment="center")
         with locol:
             with st.container(key="LOGOContainer"):
 
                 # 1. DYNAMIC COLORS
-                st.markdown(
-                    f'<h3 style="color:{primaryColor};">My <span style="color:orange;">Logo</span></h3>',
-                    unsafe_allow_html=True,
-                )
+                # st.markdown(
+                #     f'<h3 style="color:{primaryColor};">My <span style="color:orange;">Logo</span></h3>',
+                #     unsafe_allow_html=True,
+                # )
 
-                # st.subheader(":green[MY] :rainbow[LOGO]")  # 2.FIXED COLORS
+                # 2.FIXED COLORS
+                # st.subheader(":green[MY] :rainbow[LOGO]")
 
-                # st.image("static/logo1.png")  # 3.LOGO IMAGE
-                # st.image("static/logo.png")
+                # 3.LOGO IMAG
+                # st.image("static/logo1.png")
+                st.image("static/logo.png")
 
         with navcol:
             with st.container(key="MenuContainer"):

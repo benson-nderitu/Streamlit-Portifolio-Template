@@ -49,13 +49,13 @@ def save_uploaded_file(uploaded_file):
 
 
 # Streamlit App
-@st.fragment
+@st.fragment()
 def main():
     # st.title("Quill Editor with Local Image Integration")
 
     # Ensure at least one sample image exists
     create_sample_image()
-    BTNCTNS = st.empty()
+    # BTNCTNS = st.empty()
     # Create two columns
     col1, col2 = st.columns([3, 1])
 
@@ -65,8 +65,8 @@ def main():
             """
             <style>
             .element-container:has(> iframe) {
-            height: 700px;
-            max-height: 700px;
+            height: 500px;
+            max-height: 500px;
             overflow-y: auto;
             overflow-x: hidden;
             }
@@ -82,7 +82,7 @@ def main():
 
     # Column 2: Image List
     with col2:
-        with st.container(border=True, height=700):
+        with st.container(border=True, height=500):
             # Image upload feature
             uploaded_file = st.file_uploader(
                 "Choose an image", type=["png", "jpg", "jpeg", "gif"]
@@ -100,7 +100,7 @@ def main():
             else:
                 st.write("No images available.")
 
-    svcolbtn, prvcol, htmlcolprev, _ = BTNCTNS.columns([1, 1, 1, 7])
+    svcolbtn, prvcol, htmlcolprev, _ = st.columns([1, 1, 1, 7])
 
     if svcolbtn.button(label="Save", icon=":material/save:", type="primary"):
         st.toast("Saving...", icon=":material/save:")

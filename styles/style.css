@@ -1,11 +1,21 @@
-/* =========GLOBAL CSS======== */
-/* --ST.DIVIDER ---- */
+/* =========================================
+
+    GLOBAL CSS
+    
+=========================================== */
+
+/* ------------
+    ST.DIVIDER 
+--------------- */
 hr {
     background-image: linear-gradient(to right, #3498db, #2ecc71, #e74c3c, #f1c40f, #34495e, #f39c12);
-    padding: 1px;
+    padding: 10px;
 }
 
-/*====NAVBAR CSS= DO NOT CHANGE THESE VALUES ======*/
+/*=======================================
+    NAVBAR CSS
+    DO NOT CHANGE THESE VALUES 
+========================================*/
 .st-key-TopMenuContainer {
     max-width: 90vw;
     padding-right: 50px;
@@ -43,8 +53,13 @@ hr {
     }
 }
 
-/* =========ABOUT ME TAB CSS======== */
-/* ----------HERO SECTION -------- */
+
+/*=========================
+    ABOUT ME TAB CSS
+===========================*/
+/* -----------------
+  HERO SECTION 
+------------------ */
 .st-key-heroContainer {
     margin-bottom: 25px;
     padding: 70px 25px;
@@ -77,13 +92,17 @@ hr {
 
 }
 
-/* ======SECTIONS SPACING ====== */
+
+/*=========================
+	SECTIONS SPACING
+===========================*/
 .st-key-AboutMeContainer,
 .st-key-MyServicesContainer,
 .st-key-SkillsContainer,
 .st-key-ExperienceContainer,
 .st-key-PortfolioContainer,
-.st-key-ReviewsContainer {
+.st-key-TestimonialContainer,
+.st-key-FooterContainer {
     padding: 50px;
     border-top: 1px solid #e0e0e0;
 }
@@ -95,12 +114,15 @@ hr {
     .st-key-SkillsContainer,
     .st-key-ExperienceContainer,
     .st-key-PortfolioContainer,
-    .st-key-ReviewsContainer {
+    .st-key-TestimonialContainer,
+    .st-key-FooterContainer {
         padding: 5px;
     }
 }
 
-/* ======HEADERS COLUMNS ====== */
+/*=========================
+	HEADERS SECTIONS
+===========================*/
 .st-key-AboutMeDescriptionContainer,
 .st-key-AboutMeVideoContainer,
 .st-key-MyServiceslistContainer,
@@ -121,15 +143,47 @@ hr {
 
 }
 
-/* ====== VIEW ALL BUTTON ====== */
+/* ====================== 
+   VIEW ALL BUTTON 
+========================= */
 .st-key-portfolio_read_more button {
-    background-color: red;
+    background-color: gray;
     border: none !important;
 }
 
-/* ====== ADMIN PAGE ====== */
+/* ====================
+    ADMIN PAGE 
+===================== */
 .st-key-NewPortfolioContainer {
     margin-top: 50px;
     margin-bottom: 50px;
     padding: 10px;
+
+}
+
+/* ----------------
+    Contact Page
+---------------- */
+.st-key-ContactContainer {
+    padding: 0px 150px;
+}
+
+@media (max-width: 820px) {
+    .st-key-ContactContainer {
+        padding: 0px 5px;
+    }
+}
+
+.st-key-contactformContainer {
+    padding: 38px 76px;
+    box-shadow: 4px 4px 10px #0003;
+    /* box-shadow: 4px 4px 10px #e0e0e0;  Dark mode*/
+}
+
+/* --------------------
+    FOOTER
+----------------------*/
+.st-key-FooterTitle {
+
+    margin-bottom: 20px;
 }

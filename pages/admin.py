@@ -6,16 +6,25 @@ import pandas as pd
 import streamlit as st
 import streamlit_authenticator as stauth
 
-from data.alldata import fetch_profile, get_services, update_profile, update_services
-from data.database import create_database
+from data.alldata import (
+    get_profile,
+    get_services,
+    get_skillDescription,
+    get_skills,
+    update_profile,
+    update_services,
+    update_skillDescription,
+    update_skills,
+)
 
 set_page_config = st.set_page_config(
     page_title="Admin Page",
     page_icon=":material/admin_panel_settings:",
     layout="wide",
 )
+# from data.database import create_database
 
-create_database()  # Create databases if it does not exist
+# create_database()  # Create databases if it does not exist
 
 st.markdown(
     """
@@ -60,7 +69,16 @@ authenticator = stauth.Authenticate(
     st.secrets["cookie"]["expiry_days"],
 )
 try:
-    authenticator.login()
+    authenticator.login(
+        fields={
+            "Form name": "Admin Page Login",
+            "Login": "Give Me Access",
+            "Username": "Admin Username",
+            "Password": "Admin Password",
+        },
+        # single_session=True,
+        # clear_on_submit=True,
+    )
 except Exception as e:
     st.error(e)
 if st.session_state["authentication_status"]:
@@ -83,6 +101,9 @@ if st.session_state["authentication_status"]:
         st.divider()
         authenticator.logout()
 
+    # ----------------------------------------------------------------
+    #    PROFILE CONFIG
+    # ----------------------------------------------------------------
     def profile():
         with st.expander("PROFILE", icon=":material/account_circle:"):
             # Fetch current profile data
@@ -134,25 +155,33 @@ if st.session_state["authentication_status"]:
                         time.sleep(1)
                     st.toast("Profile updated successfully!", icon="✅")
                     time.sleep(1.5)
-                    st.cache_data.clear(fetch_profile)
+                    st.cache_data.clear()
                     st.rerun()
 
+    # ----------------------------------------------------------------
+    #     SERVICES CONFIG
+    # ----------------------------------------------------------------
     def services():
         with st.expander("Services Section", icon=":material/palette:"):
-            df = get_services()
-            st.write("Edit the table below:")
-            edited_data = st.data_editor(
-                df,
+            services_df = get_services()
+            st.data_editor(
+                services_df,
                 use_container_width=True,
                 num_rows="dynamic",
                 hide_index=True,
                 key="my_key",
             )
 
-            if st.button("Apply Changes"):
+            if st.button(
+                label="Apply Changes",
+                icon=":material/update:",
+                type="primary",
+                help="Apply changes and save them to the database",
+                key="services_savebutton_key",
+            ):
                 if "my_key" in st.session_state:
                     changes = st.session_state["my_key"]
-                    updated_df = df.copy()
+                    updated_services_df = services_df.copy()
 
                     # Apply edits
                     if changes["edited_rows"]:
@@ -161,34 +190,100 @@ if st.session_state["authentication_status"]:
                                 if pd.notnull(
                                     value
                                 ):  # Update only if the new value is not null
-                                    updated_df.loc[int(index), column] = value
+                                    updated_services_df.loc[int(index), column] = value
                     # Apply additions
                     if changes["added_rows"]:
                         new_rows_df = pd.DataFrame(changes["added_rows"])
-                        updated_df = pd.concat(
-                            [updated_df, new_rows_df], ignore_index=True
+                        updated_services_df = pd.concat(
+                            [updated_services_df, new_rows_df], ignore_index=True
                         )
 
                     # Apply deletions
                     if changes["deleted_rows"]:
                         deleted_ids = changes["deleted_rows"]
-                        updated_df = updated_df.drop(index=deleted_ids).reset_index(
-                            drop=True
+                        updated_services_df = updated_services_df.drop(
+                            index=deleted_ids
+                        ).reset_index(drop=True)
+
+                    # st.write(updated_services_df)
+
+                # Update the database
+                with st.spinner("Applying changes..."):
+                    update_services(updated_services_df)
+                    st.toast("Changes have been saved to the database.", icon="✅")
+                    time.sleep(1)
+                    st.cache_data.clear()
+                    st.rerun()
+
+    # ----------------------------------------------------------------
+    #    SKILLS CONFIG
+    # ----------------------------------------------------------------
+    def skills():
+        with st.expander("Skills Section", icon=":material/palette:"):
+            skill_df = get_skills()
+            st.data_editor(
+                skill_df,
+                use_container_width=True,
+                num_rows="dynamic",
+                hide_index=True,
+                key="skills_key",
+            )
+
+            if st.button(
+                label="Apply Changes",
+                icon=":material/update:",
+                type="primary",
+                help="Apply changes and save them to the database",
+                key="skills_savebutton_key",
+            ):
+                if "my_key" in st.session_state:
+                    skill_df_changes = st.session_state["skills_key"]
+                    updated_skills_df = skill_df.copy()
+
+                    # Apply edits
+                    if skill_df_changes["edited_rows"]:
+                        for index, row in skill_df_changes["edited_rows"].items():
+                            for column, value in row.items():
+                                if pd.notnull(
+                                    value
+                                ):  # Update only if the new value is not null
+                                    updated_skills_df.loc[int(index), column] = value
+                    # Apply additions
+                    if skill_df_changes["added_rows"]:
+                        new_rows_df = pd.DataFrame(skill_df_changes["added_rows"])
+                        updated_skills_df = pd.concat(
+                            [updated_skills_df, new_rows_df], ignore_index=True
                         )
 
-                    st.write(updated_df)
+                    # Apply deletions
+                    if skill_df_changes["deleted_rows"]:
+                        deleted_ids = skill_df_changes["deleted_rows"]
+                        updated_skills_df = updated_skills_df.drop(
+                            index=deleted_ids
+                        ).reset_index(drop=True)
 
-                # Update the database with the new data
-                st.spinner()
-                time.sleep(1)
-                update_services(updated_df)
-                st.success("Changes have been saved to the database.")
-                st.cache_data.clear()
-                st.rerun()
+                    st.write(updated_skills_df)
+
+                # Update the database
+                with st.spinner("Applying changes..."):
+                    update_skills(updated_skills_df)
+                    st.toast("Changes have been saved to the database.", icon="✅")
+                    time.sleep(1)
+                    st.cache_data.clear()
+                    st.rerun()
+
+    # ----------------------------------------------------------------
+    #       EXPERINCE CONFIG
+    # ----------------------------------------------------------------
+    def story():
+        with st.expander("Skills Section", icon=":material/palette:"):
+            st.write("This is the My story section")
 
     # Render the ADMIN Sections============================
     profile()
     services()
+    skills()
+    story()
 
 elif st.session_state["authentication_status"] is False:
     st.error("Username/password is incorrect")

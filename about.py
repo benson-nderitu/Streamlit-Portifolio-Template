@@ -5,13 +5,22 @@ from datetime import datetime
 import streamlit as st
 import streamlit_antd_components as sac
 
-from data.alldata import fetch_profile, get_project_cards
+from data.alldata import (
+    get_profile,
+    get_project_cards,
+    get_services,
+    get_skillDescription,
+    get_skills,
+)
+from data.database import create_database
 from portifolio import carousel_with_autoslide
 
 primary_color = st.get_option("theme.primaryColor")
 
 
-# Define a reusable functions
+# ----------------------------------------------------------------
+#       Define a reusable header styling function
+# ----------------------------------------------------------------
 def styled_title(normal_text, styled_text, styled_color="blue"):
     """
     Creates a styled title with two parts: normal text and a colored styled text.
@@ -31,11 +40,13 @@ def styled_title(normal_text, styled_text, styled_color="blue"):
 
 
 # Applying the  function
-
 # styled_title("Welcome to", "Streamlit", "red")
 # styled_title("Powered by", "Python", "purple")
-# Fetch current profile data
-profile = fetch_profile()
+
+# ----------------------------------------------------------------
+#             Fetch current profile data
+# ----------------------------------------------------------------
+profile = get_profile()
 (
     name,
     description,
@@ -49,7 +60,10 @@ profile = fetch_profile()
 
 @st.fragment()
 def resume_about():
-    # --- HERO SECTION ---
+
+    # --------------------------------------
+    #          HERO SECTION
+    # --------------------------------------
     @st.fragment
     def heroprofile():
         with st.container(key="heroContainer"):
@@ -84,6 +98,9 @@ def resume_about():
 
     heroprofile()
 
+    # ---------------------------------
+    #     ABOUT ME SECTION
+    # --------------------------------
     @st.fragment
     def AboutMe():
         with st.container(key="AboutMeContainer"):
@@ -110,7 +127,6 @@ def resume_about():
                             label="Download CV",
                             icon=":material/download:",
                             key="download_resume",
-                            type="primary",
                         ):
                             st.write("Downloading...")
                         # st.download_button(
@@ -119,36 +135,84 @@ def resume_about():
                         #     file_name=resume_file.name,
                         #     mime="application/octet-stream",
                         # )
-                    # --- SOCIAL LINKS ---
+
+                    # --------------
+                    #   SOCIAL LINKS
+                    # ---------------
                     st.divider()
+                    # ...existing code...
+
+                    # Define the dictionary with button details
+                    buttons_dict = {
+                        "linkedin": {
+                            "icon": "linkedin",
+                            "color": "#0077B5",
+                            "href": "https://www.linkedin.com/in/benson-nderitu-88776215b",
+                        },
+                        "youtube": {
+                            "icon": "youtube",
+                            "color": "#FF0000",
+                            "href": "https://youtube.com/@scho_da?si=wr1UcYXz7gcHFAeY",
+                        },
+                        "github": {
+                            "icon": "github",
+                            "color": "#181717",
+                            "href": "https://github.com/benson-nderitu",
+                        },
+                        "twitter": {
+                            "icon": "twitter",
+                            "color": "#1DA1F2",
+                            "href": "https://twitter.com/BensonN41451654",
+                        },
+                    }
+
+                    # Create a list of ButtonsItem objects from the dictionary
+                    buttons_list = [
+                        sac.ButtonsItem(icon=details["icon"], color=details["color"], href=details["href"])
+                        for details in buttons_dict.values()
+                    ]
+
+                    # Render the buttons
                     sac.buttons(
-                        [
-                            sac.ButtonsItem(
-                                icon="linkedin",
-                                color="#0077B5",
-                                href="https://www.linkedin.com/in/benson-nderitu-88776215b",
-                            ),
-                            sac.ButtonsItem(
-                                icon="youtube",
-                                color="#FF0000",
-                                href="https://youtube.com/@scho_da?si=wr1UcYXz7gcHFAeY",
-                            ),
-                            sac.ButtonsItem(
-                                icon="github",
-                                color="#181717",
-                                href="https://github.com/benson-nderitu",
-                            ),
-                            sac.ButtonsItem(
-                                icon="twitter",
-                                color="#1DA1F2",
-                                href="https://twitter.com/BensonN41451654",
-                            ),
-                        ],
+                        buttons_list,
                         index=None,
                         use_container_width=True,
                         align="center",
                         variant="filled",
                     )
+
+
+                    # def sociallinks():
+                    #     sac.buttons(
+                    #         [
+                    #             sac.ButtonsItem(
+                    #                 icon="linkedin",
+                    #                 color="#0077B5",
+                    #                 href="https://www.linkedin.com/in/benson-nderitu-88776215b",
+                    #             ),
+                    #             sac.ButtonsItem(
+                    #                 icon="youtube",
+                    #                 color="#FF0000",
+                    #                 href="https://youtube.com/@scho_da?si=wr1UcYXz7gcHFAeY",
+                    #             ),
+                    #             sac.ButtonsItem(
+                    #                 icon="github",
+                    #                 color="#181717",
+                    #                 href="https://github.com/benson-nderitu",
+                    #             ),
+                    #             sac.ButtonsItem(
+                    #                 icon="twitter",
+                    #                 color="#1DA1F2",
+                    #                 href="https://twitter.com/BensonN41451654",
+                    #             ),
+                    #         ],
+                    #         index=None,
+                    #         use_container_width=True,
+                    #         align="center",
+                    #         variant="filled",
+                    #     )
+
+                    # sociallinks()
 
             with abtvideo:
                 with st.container(key="AboutMeVideoContainer"):
@@ -158,6 +222,9 @@ def resume_about():
 
     AboutMe()
 
+    # ----------------------------------------------------------------
+    #      MY SERVICES SECTION
+    # ----------------------------------------------------------------
     @st.fragment
     def MyServices():
         with st.container(key="MyServicesContainer"):
@@ -165,16 +232,16 @@ def resume_about():
             with msrttl:
                 styled_title("My", "SERVICES", primary_color)
             with servscol:
-                # Define a function to render the components dynamically
-                def render_components(components):
+                # render the components dynamically
+                def render_components(services):
                     col1, col2, col3 = st.columns(3)
                     # Loop through the list and render each item
-                    for idx, component in enumerate(components):
-                        title = component.get("title", "Untitled")
-                        description = component.get(
+                    for idx, service in enumerate(services):
+                        title = service.get("title", "Untitled")
+                        description = service.get(
                             "description", "No description available."
                         )
-                        icon_name = component.get(  # icons from Bootstrap Icons
+                        icon_name = service.get(  # icons from Bootstrap Icons
                             "icon", "house"
                         )  # Default icon is 'house'
 
@@ -227,45 +294,50 @@ def resume_about():
                                     unsafe_allow_html=True,
                                 )
 
-                # Example service component list
-                components_data = [
-                    {
-                        "title": "Web Development",
-                        "description": "Lorem ipsum dolor sit amet.",
-                        "icon": "laptop",
-                    },
-                    {
-                        "title": "UI / UX Design",
-                        "description": "Lorem ipsum dolor sit amet.",
-                        "icon": "pen",
-                    },
-                    {
-                        "title": "App Development",
-                        "description": "Lorem ipsum dolor sit amet.",
-                        "icon": "phone",
-                    },
-                    {
-                        "title": "Photography",
-                        "description": "Lorem ipsum dolor sit amet.",
-                        "icon": "camera",
-                    },
-                    {
-                        "title": "Rebranding",
-                        "description": "Lorem ipsum dolor sit amet.",
-                        "icon": "send",
-                    },
-                    {
-                        "title": "SEO Marketing",
-                        "description": "Lorem ipsum dolor sit amet.",
-                        "icon": "globe",
-                    },
-                ]
+                # services list
+                services_data = get_services()
+                services_data = services_data.to_dict(orient="records")
 
-                # Call the render function
-                render_components(components_data)
+                # services_data = [
+                #     {
+                #         "title": "Web Development",
+                #         "description": "Lorem ipsum dolor sit amet.",
+                #         "icon": "laptop",
+                #     },
+                #     {
+                #         "title": "UI / UX Design",
+                #         "description": "Lorem ipsum dolor sit amet.",
+                #         "icon": "pen",
+                #     },
+                #     {
+                #         "title": "App Development",
+                #         "description": "Lorem ipsum dolor sit amet.",
+                #         "icon": "phone",
+                #     },
+                #     {
+                #         "title": "Photography",
+                #         "description": "Lorem ipsum dolor sit amet.",
+                #         "icon": "camera",
+                #     },
+                #     {
+                #         "title": "Rebranding",
+                #         "description": "Lorem ipsum dolor sit amet.",
+                #         "icon": "send",
+                #     },
+                #     {
+                #         "title": "SEO Marketing",
+                #         "description": "Lorem ipsum dolor sit amet.",
+                #         "icon": "globe",
+                #     },
+                # ]
+
+                render_components(services_data)
 
     MyServices()
 
+    # ----------------------------------------------------------------
+    #           MY SKILLS SECTION
+    # ----------------------------------------------------------------
     @st.fragment
     def MySkills():
         with st.container(key="SkillsContainer"):
@@ -274,7 +346,7 @@ def resume_about():
                 styled_title("My", "SKILLS", primary_color)
             with skillscol:
                 with st.container(key="SkillsListContainer"):
-                    descrcol, progcol = st.columns(2)
+                    descrcol, progcol = st.columns(2, gap="large")
                     with descrcol:
                         st.markdown("### WHAT YOU NEED TO KNOW")
                         st.markdown(
@@ -301,19 +373,24 @@ def resume_about():
                                     # Create a progress bar
                                     progressbar = st.progress(0)
                                     for percent_complete in range(percentage):
-                                        # time.sleep(0.01)  # Adjust sleep time for speed
+                                        # time.sleep(0.001)  # Adjust sleep time for speed
                                         progressbar.progress(percent_complete + 1)
 
-                        skills = [
-                            {"name": "WordPress", "percentage": 95},
-                            {"name": "HTML & CSS3", "percentage": 70},
-                            {"name": "Photoshop", "percentage": 80},
-                            {"name": "Illustrator", "percentage": 90},
-                        ]
+                        skills = get_skills()
+                        skills = skills.to_dict(orient="records")
+                        # skills = [
+                        #     {"name": "WordPress", "percentage": 95},
+                        #     {"name": "HTML & CSS3", "percentage": 70},
+                        #     {"name": "Photoshop", "percentage": 80},
+                        #     {"name": "Illustrator", "percentage": 90},
+                        # ]
                         render_skills(skills)
 
     MySkills()
 
+    # ----------------------------------------------------------------
+    #       MY EXPERIENCE SECTION
+    # ----------------------------------------------------------------
     @st.fragment
     def MyStory():
         with st.container(key="ExperienceContainer"):
@@ -333,9 +410,7 @@ def resume_about():
                             )
 
                             with st.container():
-                                yrcol, expcol = st.columns(
-                                    [1, 5]
-                                )  # Define columns for year and details
+                                yrcol, expcol = st.columns([1, 5])
                                 with yrcol:
                                     st.write(f"#### {year}")
                                 with expcol:
@@ -381,75 +456,73 @@ def resume_about():
 
     MyStory()
 
+    # ----------------------------------------------------------------
+    #    PORTIFOLIO PREVIEW SECTION
+    # ----------------------------------------------------------------
+
+    # @st.fragment
+    # def portfolio_section():
+    #     with st.container(key="PortfolioContainer"):
+    #         styled_title("My", "PORTFOLIO", primary_color)
+    #         ttlcol, rdtbtncol = st.columns([3, 1])
+    #         with rdtbtncol:
+    #             if st.button(
+    #                 label="View All",
+    #                 key="portfolio_read_more",
+    #                 type="primary",
+    #                 icon=":material/open_in_new:",
+    #                 use_container_width=True,
+    #             ):
+    #                 st.write("Redirecting to portfolio page...")
+
+    #         def get_latest_projects(projects, n=3):
+    #             # Sort the projects by publishDate in descending order and get the top n projects
+    #             sorted_projects = sorted(
+    #                 projects,
+    #                 key=lambda x: datetime.strptime(x["publishDate"], "%Y-%m-%d"),
+    #                 reverse=True,
+    #             )
+    #             return sorted_projects[:n]
+
+    #         project_cards = get_project_cards()
+    #         latest_projects = get_latest_projects(project_cards)
+
+    #         cols = st.columns(3)
+    #         for i, project in enumerate(latest_projects):
+    #             with cols[i % 3]:
+    #                 carousel_with_autoslide(project)
+
+    # portfolio_section()
+
+    # ----------------------------------------------------------------
+    #      TESTIMONIAL SECTION
+    # ----------------------------------------------------------------
     @st.fragment
-    def portfolio_section():
-        with st.container(key="PortfolioContainer"):
-            styled_title("My", "PORTFOLIO", primary_color)
-            ttlcol, rdtbtncol = st.columns([3, 1])
-            with rdtbtncol:
-                if st.button(
-                    label="View All",
-                    key="portfolio_read_more",
-                    type="primary",
-                    icon=":material/open_in_new:",
-                    use_container_width=True,
-                ):
-                    st.write("Redirecting to portfolio page...")
-
-            def get_latest_projects(projects, n=3):
-                # Sort the projects by publishDate in descending order and get the top n projects
-                sorted_projects = sorted(
-                    projects,
-                    key=lambda x: datetime.strptime(x["publishDate"], "%Y-%m-%d"),
-                    reverse=True,
-                )
-                return sorted_projects[:n]
-
-            project_cards = get_project_cards()
-            latest_projects = get_latest_projects(project_cards)
-
-            cols = st.columns(3)
-            for i, project in enumerate(latest_projects):
-                with cols[i % 3]:
-                    carousel_with_autoslide(project)
-
-    portfolio_section()
-
-    @st.fragment
-    def Reviews():
-        with st.container(key="ReviewsContainer"):
+    def Testimonials():
+        with st.container(key="TestimonialContainer"):
             st.markdown("### WHAT PEOPLE ARE SAYING")
 
-            def review_section_with_navigation(reviews):
-                """
-                Displays a review section with left and right navigation buttons.
-
-                Args:
-                    reviews (list): A list of dictionaries, where each dictionary contains keys 'rating', 'text', and 'author'.
-                """
+            def testimonials_section_with_navigation(reviews):
                 if "review_index" not in st.session_state:
                     st.session_state.review_index = 0
 
-                # Get the current review based on the index
                 current_review = reviews[st.session_state.review_index]
 
                 with st.container():
                     imgcol, desccol = st.columns([1, 3], gap="medium")
 
-                    # Profile image or placeholder
                     with imgcol:
-                        # st.image("static/profile.png", use_container_width=True)
                         st.image(current_review["image"], use_container_width=True)
 
                     # Review text and details
                     with desccol:
                         st.markdown(
                             f"""
-                            ⭐ {current_review['rating']}/5
+                            ⭐ **{current_review['rating']}/5**
 
                             **"{current_review['text']}"**
 
-                            — {current_review['author']}
+                            — {current_review['author']}   — 
                             """
                         )
 
@@ -460,7 +533,7 @@ def resume_about():
                         if st.button(
                             "",
                             key="prev_review",
-                            help="View the previous review",
+                            help="View previous",
                             type="tertiary",
                             icon=":material/arrow_back_ios:",
                         ):
@@ -472,7 +545,7 @@ def resume_about():
                         if st.button(
                             "",
                             key="next_review",
-                            help="View the next review",
+                            help="View next",
                             type="tertiary",
                             icon=":material/arrow_forward_ios:",
                         ):
@@ -480,8 +553,7 @@ def resume_about():
                                 st.session_state.review_index + 1
                             ) % len(reviews)
 
-            # Example reviews data
-            reviews_data = [
+            testimonials_data = [
                 {
                     "rating": 5,
                     "text": "I loved the project. It was a great learning experience.",
@@ -502,56 +574,82 @@ def resume_about():
                 },
             ]
 
-            # Display the review section
-            review_section_with_navigation(reviews_data)
+            testimonials_section_with_navigation(testimonials_data)
 
-    Reviews()
+    Testimonials()
 
-    @st.fragment
-    def Blog():
-        with st.container(border=True, key="BlogContainer"):
-
-            st.write("Blog")
-
-    Blog()
-
-    @st.fragment
-    def Contact():
-        with st.container(border=True, key="ContactContainer"):
-            st.write("Contact")
-
-    Contact()
-
+    # ----------------------------------------------------------------
+    #        CLIENTS SECTION
+    # ----------------------------------------------------------------
     @st.fragment
     def Clients():
-        with st.container(border=True, key="ClientsContainer"):
-            st.write("Clients")
+        with st.container(key="ClientsContainer"):
+            st.title("Clients")
 
     Clients()
 
-    @st.fragment
-    def Social():
-        with st.container(border=True, key="SocialContainer"):
-            st.write("Social")
-
-    Social()
-
+    # ----------------------------------------------------------------
+    #    FOOTER
+    # ----------------------------------------------------------------
     @st.fragment
     def Footer():
-        with st.container(border=True, key="FooterContainer"):
-            st.write("Footer")
+        with st.container(key="FooterContainer"):
+            _, centrecol, _ = st.columns(
+                [
+                    1,
+                    2,
+                    1,
+                ],
+                gap="large",
+            )
+            with centrecol:
+                with st.container(key="FooterTitle"):
+                    nameextract = st.secrets["credentials"]["usernames"]
+                    for name in nameextract:
+                        st.markdown(
+                            f"""
+                            <h1 style="font-size:2.5em; text-align:center; ">{name}</h1>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+
+                # def footersociallinks():
+                #     sac.buttons(
+                #         [
+                #             sac.ButtonsItem(
+                #                 icon="linkedin",
+                #                 href="https://www.linkedin.com/in/benson-nderitu-88776215b",
+                #             ),
+                #             sac.ButtonsItem(
+                #                 icon="youtube",
+                #                 href="https://youtube.com/@scho_da?si=wr1UcYXz7gcHFAeY",
+                #             ),
+                #             sac.ButtonsItem(
+                #                 icon="github",
+                #                 href="https://github.com/benson-nderitu",
+                #             ),
+                #             sac.ButtonsItem(
+                #                 icon="twitter",
+                #                 href="https://twitter.com/BensonN41451654",
+                #             ),
+                #         ],
+                #         index=None,
+                #         use_container_width=False,
+                #         align="center",
+                #         variant="outline",
+                #     )
+
+                # footersociallinks()
+                st.divider()
+                now = datetime.now()
+                current_year = now.year
+                st.markdown(
+                    f"""
+                            <p style="text-align:center; ">@ copyright (c)   {current_year}  {name}</p>
+                            """,
+                    unsafe_allow_html=True,
+                )
 
     Footer()
 
-    # st.markdown(
-    #     """
-    # <style>
-    # hr {
-    #     background-image: linear-gradient(to right, #3498db, #2ecc71, #e74c3c, #f1c40f, #34495e, #f39c12);
-    #     padding: 1px;
-    # }
-    # </style>
-    # <hr/>
-    # """,
-    #     unsafe_allow_html=True,
-    # )
+    st.divider()
