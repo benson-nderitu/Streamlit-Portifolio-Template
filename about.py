@@ -6,11 +6,14 @@ import streamlit as st
 import streamlit_antd_components as sac
 
 from data.alldata import (
+    get_experiences,
     get_profile,
     get_project_cards,
     get_services,
     get_skillDescription,
     get_skills,
+    get_social_links,
+    get_testimonials,
 )
 from data.database import create_database
 from portifolio import carousel_with_autoslide
@@ -140,10 +143,11 @@ def resume_about():
                     #   SOCIAL LINKS
                     # ---------------
                     st.divider()
-                    # ...existing code...
 
-                    # Define the dictionary with button details
-                    buttons_dict = {
+                    socialLinks = get_social_links()
+                    socialLinks_dict = socialLinks.to_dict(orient="records")
+                    st.write(socialLinks_dict)
+                    socialLinks_dict = {
                         "linkedin": {
                             "icon": "linkedin",
                             "color": "#0077B5",
@@ -166,10 +170,13 @@ def resume_about():
                         },
                     }
 
-                    # Create a list of ButtonsItem objects from the dictionary
                     buttons_list = [
-                        sac.ButtonsItem(icon=details["icon"], color=details["color"], href=details["href"])
-                        for details in buttons_dict.values()
+                        sac.ButtonsItem(
+                            icon=details["icon"],
+                            color=details["color"],
+                            href=details["href"],
+                        )
+                        for details in socialLinks_dict.values()
                     ]
 
                     # Render the buttons
@@ -180,7 +187,6 @@ def resume_about():
                         align="center",
                         variant="filled",
                     )
-
 
                     # def sociallinks():
                     #     sac.buttons(
@@ -348,16 +354,12 @@ def resume_about():
                 with st.container(key="SkillsListContainer"):
                     descrcol, progcol = st.columns(2, gap="large")
                     with descrcol:
-                        st.markdown("### WHAT YOU NEED TO KNOW")
-                        st.markdown(
-                            "**Hello!, I'm Benson Nderitu, a data analyst based in Nairobi, Kenya.**"
-                        )
-                        st.write(
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                        )
-                        st.markdown(
-                            "**The gateway to advanced learning lies ahead, with a focus on achieving the right balance. Move forward with purpose, enriching your approach step by step. At every beginning, the essentials are key.**"
-                        )
+                        skillzdescrption = get_skillDescription()
+                        (title, header, body, closingtag) = skillzdescrption
+                        st.markdown(f"### {title}")
+                        st.markdown(f"###### {header}")
+                        st.markdown(f"{body}")
+                        st.markdown(f"###### {closingtag}")
                     with progcol:
 
                         def render_skills(skills):
@@ -418,46 +420,47 @@ def resume_about():
                                     st.markdown(f"**{role}**")
                                     st.write(description)
 
-                    # Example Data for Timeline
-                    timeline_entries = [
-                        {
-                            "year": "2016",
-                            "title": "Envato Studio",
-                            "role": "Lead Web Designer",
-                            "description": (
-                                "This was the time when we started our company. We had no idea how far we would go, "
-                                "we weren’t even sure that we would be able to survive for a few years. What drove us to "
-                                "start the company was the understanding that we could provide a service no one else was providing."
-                            ),
-                        },
-                        {
-                            "year": "2018",
-                            "title": "Envato Studio",
-                            "role": "Senior Web Developer",
-                            "description": (
-                                "During this time, we expanded our services and built a reputation in the market. Our focus "
-                                "was on providing high-quality solutions tailored to the client’s needs."
-                            ),
-                        },
-                        {
-                            "year": "2020 - Present",
-                            "title": "Envato Studio",
-                            "role": "Lead Web Developer",
-                            "description": (
-                                "This was the time when we started our company. We had no idea how far we would go, we weren’t even sure "
-                                "that we would be able to survive for a few years. What drove us to start the company was the understanding "
-                                "that we could provide a service no one else was providing."
-                            ),
-                        },
-                    ]
+                    experience = get_experiences()
+                    experience_entries = experience.to_dict(orient="records")
+                    # experience_entries = [
+                    #     {
+                    #         "year": "2016",
+                    #         "title": "Envato Studio",
+                    #         "role": "Lead Web Designer",
+                    #         "description": (
+                    #             "This was the time when we started our company. We had no idea how far we would go, "
+                    #             "we weren’t even sure that we would be able to survive for a few years. What drove us to "
+                    #             "start the company was the understanding that we could provide a service no one else was providing."
+                    #         ),
+                    #     },
+                    #     {
+                    #         "year": "2018",
+                    #         "title": "Envato Studio",
+                    #         "role": "Senior Web Developer",
+                    #         "description": (
+                    #             "During this time, we expanded our services and built a reputation in the market. Our focus "
+                    #             "was on providing high-quality solutions tailored to the client’s needs."
+                    #         ),
+                    #     },
+                    #     {
+                    #         "year": "2020 - Present",
+                    #         "title": "Envato Studio",
+                    #         "role": "Lead Web Developer",
+                    #         "description": (
+                    #             "This was the time when we started our company. We had no idea how far we would go, we weren’t even sure "
+                    #             "that we would be able to survive for a few years. What drove us to start the company was the understanding "
+                    #             "that we could provide a service no one else was providing."
+                    #         ),
+                    #     },
+                    # ]
 
                     # Render the timeline
-                    render_timeline(timeline_entries)
+                    render_timeline(experience_entries)
 
     MyStory()
 
     # ----------------------------------------------------------------
-    #    PORTIFOLIO PREVIEW SECTION
+    #    PORTFOLIO PREVIEW SECTION
     # ----------------------------------------------------------------
 
     # @st.fragment
@@ -502,7 +505,7 @@ def resume_about():
         with st.container(key="TestimonialContainer"):
             st.markdown("### WHAT PEOPLE ARE SAYING")
 
-            def testimonials_section_with_navigation(reviews):
+            def testimonials(reviews):
                 if "review_index" not in st.session_state:
                     st.session_state.review_index = 0
 
@@ -553,28 +556,31 @@ def resume_about():
                                 st.session_state.review_index + 1
                             ) % len(reviews)
 
-            testimonials_data = [
-                {
-                    "rating": 5,
-                    "text": "I loved the project. It was a great learning experience.",
-                    "author": "John Doe",
-                    "image": "static/profile.png",
-                },
-                {
-                    "rating": 4.5,
-                    "text": "Amazing work! Truly exceeded my expectations.",
-                    "author": "Jane Smith",
-                    "image": "static/logo.png",
-                },
-                {
-                    "rating": 5,
-                    "text": "Fantastic job! Highly recommend.",
-                    "author": "Alex Johnson",
-                    "image": "static/profile.png",
-                },
-            ]
+            testimonials_data = get_testimonials()
+            testimonials_data = testimonials_data.to_dict(orient="records")
 
-            testimonials_section_with_navigation(testimonials_data)
+            # testimonials_data = [
+            #     {
+            #         "rating": 5,
+            #         "text": "I loved the project. It was a great learning experience.",
+            #         "author": "John Doe",
+            #         "image": "static/profile.png",
+            #     },
+            #     {
+            #         "rating": 4.5,
+            #         "text": "Amazing work! Truly exceeded my expectations.",
+            #         "author": "Jane Smith",
+            #         "image": "static/logo.png",
+            #     },
+            #     {
+            #         "rating": 5,
+            #         "text": "Fantastic job! Highly recommend.",
+            #         "author": "Alex Johnson",
+            #         "image": "static/profile.png",
+            #     },
+            # ]
+
+            testimonials(testimonials_data)
 
     Testimonials()
 
@@ -605,10 +611,18 @@ def resume_about():
             with centrecol:
                 with st.container(key="FooterTitle"):
                     nameextract = st.secrets["credentials"]["usernames"]
-                    for name in nameextract:
+                    for username, details in nameextract.items():
+                        full_name = details["name"]
                         st.markdown(
                             f"""
-                            <h1 style="font-size:2.5em; text-align:center; ">{name}</h1>
+                            <h1 style="font-size:2.5em; text-align:center; "></h1>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+
+                        st.markdown(
+                            f"""
+                            <h1 style="font-size:2.5em; text-align:center;">{full_name}</h1>
                             """,
                             unsafe_allow_html=True,
                         )
@@ -645,8 +659,10 @@ def resume_about():
                 current_year = now.year
                 st.markdown(
                     f"""
-                            <p style="text-align:center; ">@ copyright (c)   {current_year}  {name}</p>
-                            """,
+                    <div style="text-align: center;">
+                        <p>&copy; {current_year} {full_name}</p>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
 

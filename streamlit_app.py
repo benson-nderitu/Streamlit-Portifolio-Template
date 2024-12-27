@@ -150,6 +150,7 @@ def main():
     elif menu_selection == "Contact":
         contact()
 
+    st.write("Made with love by Benson Nderitu")
     menu_container.float(
         "top: 0.5rem; z-index: 999990;background: transparent; max-height:3.25rem; "
     )

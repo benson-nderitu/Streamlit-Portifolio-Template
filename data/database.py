@@ -1,8 +1,7 @@
 import os
 import sqlite3
+import threading
 from datetime import datetime
-
-import streamlit as st
 
 
 # -----------------------------------------------------------
@@ -13,7 +12,7 @@ def create_database():
         os.makedirs("data")
 
     db_path = os.path.join("data", "DATABASE.db")
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     cursor = conn.cursor()
 
     # -----------------------------------------------------------

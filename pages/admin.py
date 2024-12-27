@@ -7,14 +7,20 @@ import streamlit as st
 import streamlit_authenticator as stauth
 
 from data.alldata import (
+    get_experiences,
     get_profile,
     get_services,
     get_skillDescription,
     get_skills,
+    get_social_links,
+    get_testimonials,
+    update_experiences,
     update_profile,
     update_services,
     update_skillDescription,
     update_skills,
+    update_social_link,
+    update_testimonials,
 )
 
 set_page_config = st.set_page_config(
@@ -26,6 +32,9 @@ set_page_config = st.set_page_config(
 
 # create_database()  # Create databases if it does not exist
 
+# --------------------------------------
+#     SIDEBAR WIDTH
+# --------------------------------------
 st.markdown(
     """
        <style>
@@ -36,7 +45,9 @@ st.markdown(
        """,
     unsafe_allow_html=True,
 )
-# ---CUSTOM CSS TO REMOVE PADDING--------------
+# ----------------------------------------------
+#     REMOVE PADDING - MAIN BLOCK
+# ----------------------------------------------
 st.markdown(
     """
         <style>
@@ -52,16 +63,21 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- PATH SETTINGS ---
+# --------------------------------------
+#     PATH SETTINGS &  LOAD CSS
+# --------------------------------------
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 css_file = current_dir.parent / "styles" / "style.css"
-
-# --- LOAD CSS,   ---
 with open(css_file) as f:
     st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
 
+# --------------------------------------
+#     GET THEME COLOR
 primary_color = st.get_option("theme.primaryColor")
 
+# --------------------------------------
+#     AUTHENTICATE
+# --------------------------------------
 authenticator = stauth.Authenticate(
     st.secrets["credentials"].to_dict(),
     st.secrets["cookie"]["name"],
@@ -69,6 +85,9 @@ authenticator = stauth.Authenticate(
     st.secrets["cookie"]["expiry_days"],
 )
 try:
+    # --------------------------------------
+    #     LOGIN PAGE
+    # --------------------------------------
     authenticator.login(
         fields={
             "Form name": "Admin Page Login",
@@ -82,9 +101,12 @@ try:
 except Exception as e:
     st.error(e)
 if st.session_state["authentication_status"]:
+    # ----------------------
+    #     SIDEBAR
+    # ----------------------
     with st.sidebar:
         st.markdown(
-            f'### Welcome Back <br><span style="color: {primary_color};"><strong>{st.session_state["name"]}</strong></span>',
+            f'### Welcome Back <br><span style="color: {primary_color}; line-height: 2;"><strong>{st.session_state["name"]}</strong></span>',
             unsafe_allow_html=True,
         )
 
@@ -107,7 +129,7 @@ if st.session_state["authentication_status"]:
     def profile():
         with st.expander("PROFILE", icon=":material/account_circle:"):
             # Fetch current profile data
-            profile = fetch_profile()
+            profile = get_profile()
             (
                 name,
                 description,
@@ -136,8 +158,8 @@ if st.session_state["authentication_status"]:
                     "About Me Video Url", value=about_me_video
                 )
                 submitted = st.form_submit_button(
-                    "Update Profile",
-                    icon=":material/save:",
+                    "Apply Changes",
+                    icon=":material/update:",
                     type="primary",
                 )
 
@@ -162,7 +184,10 @@ if st.session_state["authentication_status"]:
     #     SERVICES CONFIG
     # ----------------------------------------------------------------
     def services():
-        with st.expander("Services Section", icon=":material/palette:"):
+        with st.expander("SERVICES", icon=":material/engineering:"):
+            st.markdown(
+                ":red[STRICTLY] use [Bootstrap Icons](https://icons.getbootstrap.com)"
+            )
             services_df = get_services()
             st.data_editor(
                 services_df,
@@ -216,10 +241,39 @@ if st.session_state["authentication_status"]:
                     st.rerun()
 
     # ----------------------------------------------------------------
+    #    SKILL DESCRIPTION CONFIG
+    # ----------------------------------------------------------------
+    def skills_description():
+        with st.expander("SKILL DESCRIPTION", icon=":material/description:"):
+            SkillDescription = get_skillDescription()
+            (title, header, body, closingtag) = SkillDescription
+            with st.form("Skills Section: Description", border=False):
+                new_title = st.text_input("Title", value=title)
+                new_header = st.text_area("Header", value=header)
+                new_body = st.text_area("Body", value=body)
+                new_closingtag = st.text_area("Remarks", value=closingtag)
+                submitted = st.form_submit_button(
+                    "Apply Changes",
+                    icon=":material/update:",
+                    type="primary",
+                )
+
+                if submitted:
+                    update_skillDescription(
+                        new_title, new_header, new_body, new_closingtag
+                    )
+                    with st.spinner("Updating..."):
+                        time.sleep(1)
+                    st.toast("Skills Section updated successfully!", icon="✅")
+                    time.sleep(1.5)
+                    st.cache_data.clear()
+                    st.rerun()
+
+    # ----------------------------------------------------------------
     #    SKILLS CONFIG
     # ----------------------------------------------------------------
     def skills():
-        with st.expander("Skills Section", icon=":material/palette:"):
+        with st.expander("SKILLS", icon=":material/school:"):
             skill_df = get_skills()
             st.data_editor(
                 skill_df,
@@ -236,7 +290,7 @@ if st.session_state["authentication_status"]:
                 help="Apply changes and save them to the database",
                 key="skills_savebutton_key",
             ):
-                if "my_key" in st.session_state:
+                if "skills_key" in st.session_state:
                     skill_df_changes = st.session_state["skills_key"]
                     updated_skills_df = skill_df.copy()
 
@@ -262,7 +316,7 @@ if st.session_state["authentication_status"]:
                             index=deleted_ids
                         ).reset_index(drop=True)
 
-                    st.write(updated_skills_df)
+                    # st.write(updated_skills_df)
 
                 # Update the database
                 with st.spinner("Applying changes..."):
@@ -273,17 +327,197 @@ if st.session_state["authentication_status"]:
                     st.rerun()
 
     # ----------------------------------------------------------------
-    #       EXPERINCE CONFIG
+    #       EXPERIENCE CONFIG
     # ----------------------------------------------------------------
     def story():
-        with st.expander("Skills Section", icon=":material/palette:"):
-            st.write("This is the My story section")
+        with st.expander("EXPERIENCE", icon=":material/person_play:"):
+            experiences_df = get_experiences()
+            st.data_editor(
+                experiences_df,
+                use_container_width=True,
+                num_rows="dynamic",
+                hide_index=True,
+                key="experiences_key",
+            )
+
+            if st.button(
+                label="Apply Changes",
+                icon=":material/update:",
+                type="primary",
+                help="Apply changes and save them to the database",
+                key="experiences_savebutton_key",
+            ):
+                if "experiences_key" in st.session_state:
+                    experiences_df_changes = st.session_state["experiences_key"]
+                    updated_experiences_df = experiences_df.copy()
+
+                    # Apply edits
+                    if experiences_df_changes["edited_rows"]:
+                        for index, row in experiences_df_changes["edited_rows"].items():
+                            for column, value in row.items():
+                                if pd.notnull(
+                                    value
+                                ):  # Update only if the new value is not null
+                                    updated_experiences_df.loc[int(index), column] = (
+                                        value
+                                    )
+                    # Apply additions
+                    if experiences_df_changes["added_rows"]:
+                        new_rows_df = pd.DataFrame(experiences_df_changes["added_rows"])
+                        updated_experiences_df = pd.concat(
+                            [updated_experiences_df, new_rows_df], ignore_index=True
+                        )
+
+                    # Apply deletions
+                    if experiences_df_changes["deleted_rows"]:
+                        deleted_ids = experiences_df_changes["deleted_rows"]
+                        updated_experiences_df = updated_experiences_df.drop(
+                            index=deleted_ids
+                        ).reset_index(drop=True)
+
+                    # st.write(updated_experiences_df)
+
+                # Update the database
+                with st.spinner("Applying changes..."):
+                    update_experiences(updated_experiences_df)
+                    st.toast("Changes have been saved to the database.", icon="✅")
+                    time.sleep(1)
+                    st.cache_data.clear()
+                    st.rerun()
+
+    # ----------------------------------------------------------------
+    #       TESTIMONIALS CONFIG
+    # ----------------------------------------------------------------
+    def testimonials():
+        with st.expander("TESTIMONIALS", icon=":material/sentiment_satisfied:"):
+            testimonials_df = get_testimonials()
+            st.data_editor(
+                testimonials_df,
+                use_container_width=True,
+                num_rows="dynamic",
+                hide_index=True,
+                key="testimonials_key",
+            )
+
+            if st.button(
+                label="Apply Changes",
+                icon=":material/update:",
+                type="primary",
+                help="Apply changes and save them to the database",
+                key="testimonials_savebutton_key",
+            ):
+                if "testimonials_key" in st.session_state:
+                    testimonials_df_changes = st.session_state["testimonials_key"]
+                    updated_testimonials_df = testimonials_df.copy()
+
+                    # Apply edits
+                    if testimonials_df_changes["edited_rows"]:
+                        for index, row in testimonials_df_changes[
+                            "edited_rows"
+                        ].items():
+                            for column, value in row.items():
+                                if pd.notnull(
+                                    value
+                                ):  # Update only if the new value is not null
+                                    updated_testimonials_df.loc[int(index), column] = (
+                                        value
+                                    )
+                    # Apply additions
+                    if testimonials_df_changes["added_rows"]:
+                        new_rows_df = pd.DataFrame(
+                            testimonials_df_changes["added_rows"]
+                        )
+                        updated_testimonials_df = pd.concat(
+                            [updated_testimonials_df, new_rows_df], ignore_index=True
+                        )
+
+                    # Apply deletions
+                    if testimonials_df_changes["deleted_rows"]:
+                        deleted_ids = testimonials_df_changes["deleted_rows"]
+                        updated_testimonials_df = updated_testimonials_df.drop(
+                            index=deleted_ids
+                        ).reset_index(drop=True)
+
+                    # st.write(updated_testimonials_df)
+
+                # Update the database
+                with st.spinner("Applying changes..."):
+                    update_testimonials(updated_testimonials_df)
+                    st.toast("Changes have been saved to the database.", icon="✅")
+                    time.sleep(1)
+                    st.cache_data.clear()
+                    st.rerun()
+
+    # ----------------------------------------------------------------
+    #       SOCIAL LINKS CONFIG
+    # ----------------------------------------------------------------
+    def social_links():
+        with st.expander("SOCIAL LINKS", icon=":material/public:"):
+            st.markdown(
+                ":red[STRICTLY] use [Bootstrap Icons](https://icons.getbootstrap.com)"
+            )
+            socialLinks_df = get_social_links()
+            st.data_editor(
+                socialLinks_df,
+                use_container_width=True,
+                num_rows="dynamic",
+                hide_index=True,
+                key="socialLinks_key",
+            )
+
+            if st.button(
+                label="Apply Changes",
+                icon=":material/update:",
+                type="primary",
+                help="Apply changes and save them to the database",
+                key="socialLinks_savebutton_key",
+            ):
+                if "socialLinks_key" in st.session_state:
+                    socialLinks_df_changes = st.session_state["socialLinks_key"]
+                    updated_socialLinks_df = socialLinks_df.copy()
+
+                    # Apply edits
+                    if socialLinks_df_changes["edited_rows"]:
+                        for index, row in socialLinks_df_changes["edited_rows"].items():
+                            for column, value in row.items():
+                                if pd.notnull(
+                                    value
+                                ):  # Update only if the new value is not null
+                                    updated_socialLinks_df.loc[int(index), column] = (
+                                        value
+                                    )
+                    # Apply additions
+                    if socialLinks_df_changes["added_rows"]:
+                        new_rows_df = pd.DataFrame(socialLinks_df_changes["added_rows"])
+                        updated_socialLinks_df = pd.concat(
+                            [updated_socialLinks_df, new_rows_df], ignore_index=True
+                        )
+
+                    # Apply deletions
+                    if socialLinks_df_changes["deleted_rows"]:
+                        deleted_ids = socialLinks_df_changes["deleted_rows"]
+                        updated_socialLinks_df = updated_socialLinks_df.drop(
+                            index=deleted_ids
+                        ).reset_index(drop=True)
+
+                    # st.write(updated_socialLinks_df)
+
+                # Update the database
+                with st.spinner("Applying changes..."):
+                    update_social_link(updated_socialLinks_df)
+                    st.toast("Changes have been saved to the database.", icon="✅")
+                    time.sleep(1)
+                    st.cache_data.clear()
+                    st.rerun()
 
     # Render the ADMIN Sections============================
     profile()
     services()
+    skills_description()
     skills()
     story()
+    testimonials()
+    social_links()
 
 elif st.session_state["authentication_status"] is False:
     st.error("Username/password is incorrect")

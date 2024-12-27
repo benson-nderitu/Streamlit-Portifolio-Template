@@ -1,6 +1,14 @@
 import streamlit as st
 import streamlit_antd_components as sac
 
+from data.alldata import get_social_links
+
+soc = get_social_links()
+
+# st.write(soc)
+st.data_editor(soc)
+
+
 # Define the dictionary with button details
 buttons_dict = {
     "linkedin": {

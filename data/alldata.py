@@ -9,23 +9,26 @@ import streamlit as st
 # =================================================================
 current_dir = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(current_dir, "DATABASE.db")
-conn = sqlite3.connect(db_path)
-cursor = conn.cursor()
 
 
-# ===============================================================s=
+# ================================================================
 #        PROFILE DATA
 # ================================================================
+@st.cache_data()
 def get_profile():
-    cursor.execute(
-        "SELECT name, description, profile_image, introduction, about_me_description, about_me_closingTag, about_me_video FROM profiles WHERE id = 1"
-    )
-    profile = cursor.fetchone()
-    conn.close()
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT name, description, profile_image, introduction, 
+                   about_me_description, about_me_closingTag, about_me_video 
+            FROM profiles WHERE id = 1
+            """
+        )
+        profile = cursor.fetchone()
     return profile
 
 
-# Function to update profile
 def update_profile(
     name,
     description,
@@ -35,135 +38,192 @@ def update_profile(
     about_me_closingTag,
     about_me_video,
 ):
-    cursor.execute(
-        "UPDATE profiles SET name = ?, description = ?, profile_image = ?, introduction = ?, about_me_description = ?, about_me_closingTag = ?, about_me_video = ? WHERE id = 1",
-        (
-            name,
-            description,
-            profile_image,
-            introduction,
-            about_me_description,
-            about_me_closingTag,
-            about_me_video,
-        ),
-    )
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            UPDATE profiles 
+            SET name = ?, description = ?, profile_image = ?, introduction = ?, 
+                about_me_description = ?, about_me_closingTag = ?, about_me_video = ? 
+            WHERE id = 1
+            """,
+            (
+                name,
+                description,
+                profile_image,
+                introduction,
+                about_me_description,
+                about_me_closingTag,
+                about_me_video,
+            ),
+        )
+        conn.commit()
 
 
 # ================================================================
 #   SERVICES
 # ================================================================
+@st.cache_data()
 def get_services():
-    # db_path = os.path.join(current_dir, "DATABASE.db")
-    # conn = sqlite3.connect(db_path)
-    query = "SELECT id, title, description, icon FROM services"
-    df = pd.read_sql_query(query, conn)
-    conn.close()
+    with sqlite3.connect(db_path) as conn:
+        query = "SELECT id, title, description, icon FROM services"
+        df = pd.read_sql_query(query, conn)
     return df
 
 
-# Function to update a service table
 def update_services(df):
-    # Clear the table first to avoid duplicates
-    cursor.execute("DELETE FROM services")
-    # Insert updated rows
-    for _, row in df.iterrows():
-        cursor.execute(
-            "INSERT INTO services (id, title, description, icon) VALUES (?, ?, ?, ?)",
-            (row["id"], row["title"], row["description"], row["icon"]),
-        )
-
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM services")
+        for _, row in df.iterrows():
+            cursor.execute(
+                """
+                INSERT INTO services (id, title, description, icon) 
+                VALUES (?, ?, ?, ?)
+                """,
+                (row["id"], row["title"], row["description"], row["icon"]),
+            )
+        conn.commit()
 
 
 # ================================================================
 #      SKILLS  DESCRIPTION SECTION
 # ================================================================
+@st.cache_data()
 def get_skillDescription():
-    cursor.execute(
-        "SELECT title, header, body, closingtag FROM skillsDescription WHERE id = 1"
-    )
-    skillDescription = cursor.fetchone()
-    conn.close()
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT title, header, body, closingtag 
+            FROM skillsDescription WHERE id = 1
+            """
+        )
+        skillDescription = cursor.fetchone()
     return skillDescription
 
 
-# Function to update skillDescription
 def update_skillDescription(title, header, body, closingtag):
-    cursor.execute(
-        "UPDATE skillsDescription SET title = ?, header = ?, body = ?, closingtag = ? WHERE id = 1",
-        (title, header, body, closingtag),
-    )
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            UPDATE skillsDescription 
+            SET title = ?, header = ?, body = ?, closingtag = ? 
+            WHERE id = 1
+            """,
+            (title, header, body, closingtag),
+        )
+        conn.commit()
 
 
 # ================================================================
 #   SKILLS
 # ================================================================
+@st.cache_data()
 def get_skills():
-    # db_path = os.path.join(current_dir, "DATABASE.db")
-    # conn = sqlite3.connect(db_path)
-    query = "SELECT id, name, percentage FROM skills"
-    df = pd.read_sql_query(query, conn)
-    conn.close()
+    with sqlite3.connect(db_path) as conn:
+        query = "SELECT id, name, percentage FROM skills"
+        df = pd.read_sql_query(query, conn)
     return df
 
 
-# Function to update table
 def update_skills(df):
-    # Clear the table first to avoid duplicates
-    cursor.execute("DELETE FROM skills")
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM skills")
+        for _, row in df.iterrows():
+            cursor.execute(
+                """
+                INSERT INTO skills (id, name, percentage) 
+                VALUES (?, ?, ?)
+                """,
+                (row["id"], row["name"], row["percentage"]),
+            )
+        conn.commit()
 
-    # Insert updated rows
-    for _, row in df.iterrows():
-        cursor.execute(
-            "INSERT INTO skills (id, name, percentage) VALUES (?, ?, ?)",
-            (row["id"], row["name"], row["percentage"]),
-        )
 
-    conn.commit()
-    conn.close()
+# ================================================================
+#   EXPERIENCE
+# ================================================================
+@st.cache_data()
+def get_experiences():
+    with sqlite3.connect(db_path) as conn:
+        query = "SELECT id, year, title, role, description FROM experience"
+        df = pd.read_sql_query(query, conn)
+    return df
 
 
-# ==============================================================================
-#     GET PROJECT CARDS
-# ==============================================================================
+def update_experiences(df):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM experience")
+        for _, row in df.iterrows():
+            cursor.execute(
+                """
+                INSERT INTO experience (id, year, title, role, description) 
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (row["id"], row["year"], row["title"], row["role"], row["description"]),
+            )
+        conn.commit()
+
+
+# ================================================================
+#   TESTIMONIALS
+# ================================================================
+@st.cache_data()
+def get_testimonials():
+    with sqlite3.connect(db_path) as conn:
+        query = "SELECT id, rating, text, author, image FROM testimonials"
+        df = pd.read_sql_query(query, conn)
+    return df
+
+
+def update_testimonials(df):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM testimonials")
+        for _, row in df.iterrows():
+            cursor.execute(
+                """
+                INSERT INTO testimonials (id, rating, text, author, image) 
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (row["id"], row["rating"], row["text"], row["author"], row["image"]),
+            )
+        conn.commit()
+
+
+# =================================================================
+#     SOCIAL LINKS
+# =================================================================
+@st.cache_data()
 def get_social_links():
-    cursor.execute("SELECT * FROM social_links")
-    rows = cursor.fetchall()
-
-    social_links = []
-    for row in rows:
-        social_links.append(
-            {"id": row[0], "icon": row[1], "color": row[2], "href": row[3]}
-        )
-
-    conn.close()
-    return social_links
+    with sqlite3.connect(db_path) as conn:
+        query = "SELECT id, icon, color, href FROM social_links"
+        df = pd.read_sql_query(query, conn)
+    return df
 
 
-def update_social_link(link_id, icon=None, color=None, href=None):
-    if icon:
-        cursor.execute("UPDATE social_links SET icon = ? WHERE id = ?", (icon, link_id))
-    if color:
-        cursor.execute(
-            "UPDATE social_links SET color = ? WHERE id = ?", (color, link_id)
-        )
-    if href:
-        cursor.execute("UPDATE social_links SET href = ? WHERE id = ?", (href, link_id))
-
-    conn.commit()
-    conn.close()
+def update_social_link(df):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM social_links")
+        for _, row in df.iterrows():
+            cursor.execute(
+                """
+                INSERT INTO social_links (id, icon, color, href) 
+                VALUES (?, ?, ?, ?)
+                """,
+                (row["id"], row["icon"], row["color"], row["href"]),
+            )
+        conn.commit()
 
 
 # ==============================================================================
 #     GET PROJECT CARDS
 # ==============================================================================
-
-
 @st.cache_data()
 def get_project_cards():
     return [
