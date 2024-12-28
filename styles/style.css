@@ -147,7 +147,7 @@ hr {
    VIEW ALL BUTTON 
 ========================= */
 .st-key-portfolio_read_more button {
-    background-color: gray;
+    background-color: red;
     border: none !important;
 }
 

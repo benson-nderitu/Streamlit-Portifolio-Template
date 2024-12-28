@@ -229,7 +229,7 @@ def create_database():
     if count == 0:
         timeline_entries = [
             {
-                "year": "2016",
+                "year": "2015",
                 "title": "Envato Studio",
                 "role": "Lead Web Designer",
                 "description": (
@@ -239,23 +239,28 @@ def create_database():
                 ),
             },
             {
-                "year": "2018",
+                "year": "2016 - 2018",
                 "title": "Envato Studio",
-                "role": "Senior Web Developer",
-                "description": (
-                    "During this time, we expanded our services and built a reputation in the market. Our focus "
-                    "was on providing high-quality solutions tailored to the client’s needs."
-                ),
+                "role": "Lead Web Designer",
+                "description": "This was the time when we started our company. We had no idea how far we would go, we weren’t even sure that we would be able to survive for a few years. What drove us to start the company was the understanding that we could provide a service no one else was providing.",
             },
             {
-                "year": "2020 - Present",
+                "year": "2018 - 2020",
+                "title": "Envato Studio",
+                "role": "Senior Web Developer",
+                "description": "During this time, we expanded our services and built a reputation in the market. Our focus was on providing high-quality solutions tailored to the client’s needs.",
+            },
+            {
+                "year": "2020 - 2022",
                 "title": "Envato Studio",
                 "role": "Lead Web Developer",
-                "description": (
-                    "This was the time when we started our company. We had no idea how far we would go, we weren’t even sure "
-                    "that we would be able to survive for a few years. What drove us to start the company was the understanding "
-                    "that we could provide a service no one else was providing."
-                ),
+                "description": "This was the time when we started our company. We had no idea how far we would go, we weren’t even sure that we would be able to survive for a few years. What drove us to start the company was the understanding that we could provide a service no one else was providing.",
+            },
+            {
+                "year": "2022 - Present",
+                "title": "Envato Studio",
+                "role": "Lead Web Developer",
+                "description": "This was the time when we started our company. We had no idea how far we would go, we weren’t even sure that we would be able to survive for a few years. What drove us to start the company was the understanding that we could provide a service no one else was providing.",
             },
         ]
         for entry in timeline_entries:
@@ -380,4 +385,4 @@ def create_database():
     conn.close()
 
 
-create_database()
+# create_database()

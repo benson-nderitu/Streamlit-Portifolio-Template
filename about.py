@@ -22,17 +22,9 @@ primary_color = st.get_option("theme.primaryColor")
 
 
 # ----------------------------------------------------------------
-#       Define a reusable header styling function
+#       REUSABLE HEADER STYLE
 # ----------------------------------------------------------------
 def styled_title(normal_text, styled_text, styled_color="blue"):
-    """
-    Creates a styled title with two parts: normal text and a colored styled text.
-
-    Parameters:
-        normal_text (str): The normal text part of the title.
-        styled_text (str): The styled text part of the title.
-        styled_color (str): The color of the styled text (default is blue).
-    """
     st.markdown(
         f"""
         <h1 style="font-size:2.5em; line-height: 0; ">{normal_text}</h1>
@@ -146,37 +138,14 @@ def resume_about():
 
                     socialLinks = get_social_links()
                     socialLinks_dict = socialLinks.to_dict(orient="records")
-                    st.write(socialLinks_dict)
-                    socialLinks_dict = {
-                        "linkedin": {
-                            "icon": "linkedin",
-                            "color": "#0077B5",
-                            "href": "https://www.linkedin.com/in/benson-nderitu-88776215b",
-                        },
-                        "youtube": {
-                            "icon": "youtube",
-                            "color": "#FF0000",
-                            "href": "https://youtube.com/@scho_da?si=wr1UcYXz7gcHFAeY",
-                        },
-                        "github": {
-                            "icon": "github",
-                            "color": "#181717",
-                            "href": "https://github.com/benson-nderitu",
-                        },
-                        "twitter": {
-                            "icon": "twitter",
-                            "color": "#1DA1F2",
-                            "href": "https://twitter.com/BensonN41451654",
-                        },
-                    }
 
                     buttons_list = [
                         sac.ButtonsItem(
-                            icon=details["icon"],
-                            color=details["color"],
-                            href=details["href"],
+                            icon=id["icon"],
+                            color=id["color"],
+                            href=id["href"],
                         )
-                        for details in socialLinks_dict.values()
+                        for id in socialLinks_dict
                     ]
 
                     # Render the buttons
@@ -187,38 +156,6 @@ def resume_about():
                         align="center",
                         variant="filled",
                     )
-
-                    # def sociallinks():
-                    #     sac.buttons(
-                    #         [
-                    #             sac.ButtonsItem(
-                    #                 icon="linkedin",
-                    #                 color="#0077B5",
-                    #                 href="https://www.linkedin.com/in/benson-nderitu-88776215b",
-                    #             ),
-                    #             sac.ButtonsItem(
-                    #                 icon="youtube",
-                    #                 color="#FF0000",
-                    #                 href="https://youtube.com/@scho_da?si=wr1UcYXz7gcHFAeY",
-                    #             ),
-                    #             sac.ButtonsItem(
-                    #                 icon="github",
-                    #                 color="#181717",
-                    #                 href="https://github.com/benson-nderitu",
-                    #             ),
-                    #             sac.ButtonsItem(
-                    #                 icon="twitter",
-                    #                 color="#1DA1F2",
-                    #                 href="https://twitter.com/BensonN41451654",
-                    #             ),
-                    #         ],
-                    #         index=None,
-                    #         use_container_width=True,
-                    #         align="center",
-                    #         variant="filled",
-                    #     )
-
-                    # sociallinks()
 
             with abtvideo:
                 with st.container(key="AboutMeVideoContainer"):
@@ -238,105 +175,58 @@ def resume_about():
             with msrttl:
                 styled_title("My", "SERVICES", primary_color)
             with servscol:
-                # render the components dynamically
+
                 def render_components(services):
-                    col1, col2, col3 = st.columns(3)
-                    # Loop through the list and render each item
-                    for idx, service in enumerate(services):
-                        title = service.get("title", "Untitled")
-                        description = service.get(
-                            "description", "No description available."
-                        )
-                        icon_name = service.get(  # icons from Bootstrap Icons
-                            "icon", "house"
-                        )  # Default icon is 'house'
-
-                        # Assign columns to each
-                        if idx % 3 == 0:
-                            col = col1
-                        elif idx % 3 == 1:
-                            col = col2
-                        else:
-                            col = col3
-
-                        # Render the title, description, and button with icon
-                        with col:
-                            st.markdown(
-                                """
-                                <style>
-                                .container-with-border { padding: 20px;margin: 20px;}
-                                </style>
-                                <div class="container-with-border">
-                                """,
-                                unsafe_allow_html=True,
+                    with st.container(key="MyServiceslistContainer"):
+                        col1, col2, col3 = st.columns(3)
+                        # Loop through the list and render each item
+                        for idx, service in enumerate(services):
+                            title = service.get("title", "Untitled")
+                            description = service.get(
+                                "description", "No description available."
                             )
+                            icon_name = service.get(  # icons from Bootstrap Icons
+                                "icon", "house"
+                            )  # Default icon is 'house'
 
-                            # iconcol, titlecol = st.columns([1, 3])
-                            # with iconcol:
-                            with st.container(border=True):
-                                # Render the button with icon
-                                sac.buttons(
-                                    [
-                                        sac.ButtonsItem(
-                                            icon=sac.BsIcon(
-                                                name=icon_name,
-                                                size=50,
-                                                color=primary_color,
+                            # Assign columns to each
+                            if idx % 3 == 0:
+                                col = col1
+                            elif idx % 3 == 1:
+                                col = col2
+                            else:
+                                col = col3
+
+                            # Render the title, description, and button with icon
+                            with col:
+                                with st.container(border=True):
+                                    sac.buttons(
+                                        [
+                                            sac.ButtonsItem(
+                                                icon=sac.BsIcon(
+                                                    name=icon_name,
+                                                    size=50,
+                                                    color=primary_color,
+                                                )
                                             )
-                                        )
-                                    ],
-                                    align="center",
-                                    variant="text",
-                                    index=None,
-                                )
-                                # with titlecol:
-                                st.subheader(title)
-                                st.markdown(
-                                    f"""
-                                        <div style="text-align: center;">
-                                            <p>{description}</p>
-                                        </div>
-                                        """,
-                                    unsafe_allow_html=True,
-                                )
+                                        ],
+                                        align="center",
+                                        variant="text",
+                                        index=None,
+                                    )
+                                    st.subheader(title)
+                                    st.markdown(
+                                        f"""
+                                            <div style="text-align: center;">
+                                                <p>{description}</p>
+                                            </div>
+                                            """,
+                                        unsafe_allow_html=True,
+                                    )
 
                 # services list
                 services_data = get_services()
                 services_data = services_data.to_dict(orient="records")
-
-                # services_data = [
-                #     {
-                #         "title": "Web Development",
-                #         "description": "Lorem ipsum dolor sit amet.",
-                #         "icon": "laptop",
-                #     },
-                #     {
-                #         "title": "UI / UX Design",
-                #         "description": "Lorem ipsum dolor sit amet.",
-                #         "icon": "pen",
-                #     },
-                #     {
-                #         "title": "App Development",
-                #         "description": "Lorem ipsum dolor sit amet.",
-                #         "icon": "phone",
-                #     },
-                #     {
-                #         "title": "Photography",
-                #         "description": "Lorem ipsum dolor sit amet.",
-                #         "icon": "camera",
-                #     },
-                #     {
-                #         "title": "Rebranding",
-                #         "description": "Lorem ipsum dolor sit amet.",
-                #         "icon": "send",
-                #     },
-                #     {
-                #         "title": "SEO Marketing",
-                #         "description": "Lorem ipsum dolor sit amet.",
-                #         "icon": "globe",
-                #     },
-                # ]
-
                 render_components(services_data)
 
     MyServices()
@@ -380,12 +270,6 @@ def resume_about():
 
                         skills = get_skills()
                         skills = skills.to_dict(orient="records")
-                        # skills = [
-                        #     {"name": "WordPress", "percentage": 95},
-                        #     {"name": "HTML & CSS3", "percentage": 70},
-                        #     {"name": "Photoshop", "percentage": 80},
-                        #     {"name": "Illustrator", "percentage": 90},
-                        # ]
                         render_skills(skills)
 
     MySkills()
@@ -422,39 +306,6 @@ def resume_about():
 
                     experience = get_experiences()
                     experience_entries = experience.to_dict(orient="records")
-                    # experience_entries = [
-                    #     {
-                    #         "year": "2016",
-                    #         "title": "Envato Studio",
-                    #         "role": "Lead Web Designer",
-                    #         "description": (
-                    #             "This was the time when we started our company. We had no idea how far we would go, "
-                    #             "we weren’t even sure that we would be able to survive for a few years. What drove us to "
-                    #             "start the company was the understanding that we could provide a service no one else was providing."
-                    #         ),
-                    #     },
-                    #     {
-                    #         "year": "2018",
-                    #         "title": "Envato Studio",
-                    #         "role": "Senior Web Developer",
-                    #         "description": (
-                    #             "During this time, we expanded our services and built a reputation in the market. Our focus "
-                    #             "was on providing high-quality solutions tailored to the client’s needs."
-                    #         ),
-                    #     },
-                    #     {
-                    #         "year": "2020 - Present",
-                    #         "title": "Envato Studio",
-                    #         "role": "Lead Web Developer",
-                    #         "description": (
-                    #             "This was the time when we started our company. We had no idea how far we would go, we weren’t even sure "
-                    #             "that we would be able to survive for a few years. What drove us to start the company was the understanding "
-                    #             "that we could provide a service no one else was providing."
-                    #         ),
-                    #     },
-                    # ]
-
-                    # Render the timeline
                     render_timeline(experience_entries)
 
     MyStory()
@@ -503,7 +354,12 @@ def resume_about():
     @st.fragment
     def Testimonials():
         with st.container(key="TestimonialContainer"):
-            st.markdown("### WHAT PEOPLE ARE SAYING")
+            st.markdown(
+                f"""
+                            <h3 style="text-align:center; line-height: 5;">WHAT PEOPLE ARE SAYING</h3>
+                            """,
+                unsafe_allow_html=True,
+            )
 
             def testimonials(reviews):
                 if "review_index" not in st.session_state:
@@ -512,7 +368,7 @@ def resume_about():
                 current_review = reviews[st.session_state.review_index]
 
                 with st.container():
-                    imgcol, desccol = st.columns([1, 3], gap="medium")
+                    _, imgcol, desccol, _ = st.columns([1, 2, 2, 1], gap="medium")
 
                     with imgcol:
                         st.image(current_review["image"], use_container_width=True)
@@ -558,28 +414,6 @@ def resume_about():
 
             testimonials_data = get_testimonials()
             testimonials_data = testimonials_data.to_dict(orient="records")
-
-            # testimonials_data = [
-            #     {
-            #         "rating": 5,
-            #         "text": "I loved the project. It was a great learning experience.",
-            #         "author": "John Doe",
-            #         "image": "static/profile.png",
-            #     },
-            #     {
-            #         "rating": 4.5,
-            #         "text": "Amazing work! Truly exceeded my expectations.",
-            #         "author": "Jane Smith",
-            #         "image": "static/logo.png",
-            #     },
-            #     {
-            #         "rating": 5,
-            #         "text": "Fantastic job! Highly recommend.",
-            #         "author": "Alex Johnson",
-            #         "image": "static/profile.png",
-            #     },
-            # ]
-
             testimonials(testimonials_data)
 
     Testimonials()
@@ -615,52 +449,36 @@ def resume_about():
                         full_name = details["name"]
                         st.markdown(
                             f"""
-                            <h1 style="font-size:2.5em; text-align:center; "></h1>
+                            <h2 style="text-align:center;">{full_name}</h2>
                             """,
                             unsafe_allow_html=True,
                         )
 
-                        st.markdown(
-                            f"""
-                            <h1 style="font-size:2.5em; text-align:center;">{full_name}</h1>
-                            """,
-                            unsafe_allow_html=True,
-                        )
+                socialLinks = get_social_links()
+                footer_socialLinks = socialLinks.to_dict(orient="records")
+                buttons_list = [
+                    sac.ButtonsItem(
+                        icon=id["icon"],
+                        # color=id["color"],
+                        href=id["href"],
+                    )
+                    for id in footer_socialLinks
+                ]
+                sac.buttons(
+                    buttons_list,
+                    index=None,
+                    use_container_width=False,
+                    align="center",
+                    variant="outline",
+                )
 
-                # def footersociallinks():
-                #     sac.buttons(
-                #         [
-                #             sac.ButtonsItem(
-                #                 icon="linkedin",
-                #                 href="https://www.linkedin.com/in/benson-nderitu-88776215b",
-                #             ),
-                #             sac.ButtonsItem(
-                #                 icon="youtube",
-                #                 href="https://youtube.com/@scho_da?si=wr1UcYXz7gcHFAeY",
-                #             ),
-                #             sac.ButtonsItem(
-                #                 icon="github",
-                #                 href="https://github.com/benson-nderitu",
-                #             ),
-                #             sac.ButtonsItem(
-                #                 icon="twitter",
-                #                 href="https://twitter.com/BensonN41451654",
-                #             ),
-                #         ],
-                #         index=None,
-                #         use_container_width=False,
-                #         align="center",
-                #         variant="outline",
-                #     )
-
-                # footersociallinks()
                 st.divider()
                 now = datetime.now()
                 current_year = now.year
                 st.markdown(
                     f"""
                     <div style="text-align: center;">
-                        <p>&copy; {current_year} {full_name}</p>
+                        <p>Copyright &copy; {current_year} - {full_name}</p>
                     </div>
                     """,
                     unsafe_allow_html=True,

@@ -28,9 +28,10 @@ set_page_config = st.set_page_config(
     page_icon=":material/admin_panel_settings:",
     layout="wide",
 )
-# from data.database import create_database
 
-# create_database()  # Create databases if it does not exist
+from data.database import create_database
+
+create_database()  # Create databases if it does not exist
 
 # --------------------------------------
 #     SIDEBAR WIDTH
@@ -122,6 +123,11 @@ if st.session_state["authentication_status"]:
 
         st.divider()
         authenticator.logout()
+
+    #================================================================
+    #        MAIN page
+    #================================================================
+    # st.subheader("Settings")
 
     # ----------------------------------------------------------------
     #    PROFILE CONFIG

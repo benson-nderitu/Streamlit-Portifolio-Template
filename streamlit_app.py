@@ -16,8 +16,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-create_database()  # Create databases if it does not exist
-
 # -------------------------
 #    Get THEME COLORS
 # -------------------------
@@ -88,6 +86,7 @@ with open(css_file) as f:
 
 @st.fragment()
 def main():
+    create_database()  # Create databases
     # ==================================================
     #   NAVIGATION 1: NAVBAR from Streamlit Option Menu
     # ==================================================
@@ -150,7 +149,13 @@ def main():
     elif menu_selection == "Contact":
         contact()
 
-    st.write("Made with love by Benson Nderitu")
+    st.markdown(
+        f"""
+        <p style="text-align:center;">Made with love by Benson Nderitu</p>
+        """,
+        unsafe_allow_html=True,
+    )
+
     menu_container.float(
         "top: 0.5rem; z-index: 999990;background: transparent; max-height:3.25rem; "
     )
