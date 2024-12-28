@@ -1,13 +1,16 @@
+from datetime import datetime
 from pathlib import Path
 
 import streamlit as st
+import streamlit_antd_components as sac
 from streamlit_float import *
 from streamlit_option_menu import option_menu
 
 from about import resume_about
 from contact import contact
+from data.alldata import get_social_links
 from data.database import create_database
-from portifolio import portifolio_projects
+from portifolio_cards import portifolio_projects
 
 st.set_page_config(
     page_title="Benson Nderitu",
@@ -46,7 +49,7 @@ st.markdown(
             .st-emotion-cache-1jicfl2,
             .stMainBlockContainer.block-container {
                 width: 100%;
-                padding: 0rem 1rem 10rem;
+                padding: 0rem 1rem 5rem;
                 min-width: auto;
                 max-width: initial;
                 }
@@ -149,16 +152,67 @@ def main():
     elif menu_selection == "Contact":
         contact()
 
-    st.markdown(
-        f"""
-        <p style="text-align:center;">Made with love by Benson Nderitu</p>
-        """,
-        unsafe_allow_html=True,
-    )
-
     menu_container.float(
         "top: 0.5rem; z-index: 999990;background: transparent; max-height:3.25rem; "
     )
+
+    # ----------------------------------------------------------------
+    #    FOOTER
+    # ----------------------------------------------------------------
+    @st.fragment
+    def Footer():
+        with st.container(key="FooterContainer"):
+            _, centrecol, _ = st.columns(
+                [
+                    1,
+                    2,
+                    1,
+                ],
+                gap="large",
+            )
+            with centrecol:
+                with st.container(key="FooterTitle"):
+                    nameextract = st.secrets["credentials"]["usernames"]
+                    for username, details in nameextract.items():
+                        full_name = details["name"]
+                        st.markdown(
+                            f"""
+                            <h2 style="text-align:center;">{full_name}</h2>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+
+                socialLinks = get_social_links()
+                footer_socialLinks = socialLinks.to_dict(orient="records")
+                buttons_list = [
+                    sac.ButtonsItem(
+                        icon=id["icon"],
+                        # color=id["color"],
+                        href=id["href"],
+                    )
+                    for id in footer_socialLinks
+                ]
+                sac.buttons(
+                    buttons_list,
+                    index=None,
+                    use_container_width=False,
+                    align="center",
+                    variant="outline",
+                )
+
+                st.divider()
+                now = datetime.now()
+                current_year = now.year
+                st.markdown(
+                    f"""
+                    <div style="text-align: center;">
+                        <p>Copyright &copy; {current_year} - {full_name}</p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+    Footer()
 
 
 if __name__ == "__main__":

@@ -124,10 +124,8 @@ def carousel_with_autoslide(project):
 
 @st.fragment()
 def portifolio_projects():
-    # Generate pills dynamically
     project_cards = get_project_cards()
     unique_tags = get_unique_tags(project_cards)
-
     # Create pills
     selected_tags = st.pills("Filter by Tags", unique_tags, selection_mode="multi")
     # Filter projects based on selected tags

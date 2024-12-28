@@ -102,7 +102,7 @@ hr {
 .st-key-ExperienceContainer,
 .st-key-PortfolioContainer,
 .st-key-TestimonialContainer,
-.st-key-FooterContainer {
+.st-key-ClientsContainer {
     padding: 50px;
     border-top: 1px solid #e0e0e0;
 }
@@ -115,7 +115,7 @@ hr {
     .st-key-ExperienceContainer,
     .st-key-PortfolioContainer,
     .st-key-TestimonialContainer,
-    .st-key-FooterContainer {
+    .st-key-ClientsContainer {
         padding: 5px;
     }
 }
@@ -184,6 +184,19 @@ hr {
     FOOTER
 ----------------------*/
 .st-key-FooterTitle {
-
     margin-bottom: 20px;
+}
+
+.st-key-FooterContainer {
+    margin-top: 100px;
+    padding: 50px;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+@media (max-width: 820px) {
+    .st-key-FooterContainer {
+        margin-top: 20px;
+        padding: 5px;
+    }
 }

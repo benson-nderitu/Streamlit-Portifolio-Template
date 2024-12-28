@@ -16,7 +16,7 @@ from data.alldata import (
     get_testimonials,
 )
 from data.database import create_database
-from portifolio import carousel_with_autoslide
+from portifolio_cards import carousel_with_autoslide
 
 primary_color = st.get_option("theme.primaryColor")
 
@@ -368,10 +368,11 @@ def resume_about():
                 current_review = reviews[st.session_state.review_index]
 
                 with st.container():
-                    _, imgcol, desccol, _ = st.columns([1, 2, 2, 1], gap="medium")
+                    _, imgcol, desccol, _ = st.columns([1, 2, 2, 1])
 
                     with imgcol:
-                        st.image(current_review["image"], use_container_width=True)
+                        st.image(current_review["image"], width=200)
+                        #  use_container_width=True)
 
                     # Review text and details
                     with desccol:
@@ -427,63 +428,3 @@ def resume_about():
             st.title("Clients")
 
     Clients()
-
-    # ----------------------------------------------------------------
-    #    FOOTER
-    # ----------------------------------------------------------------
-    @st.fragment
-    def Footer():
-        with st.container(key="FooterContainer"):
-            _, centrecol, _ = st.columns(
-                [
-                    1,
-                    2,
-                    1,
-                ],
-                gap="large",
-            )
-            with centrecol:
-                with st.container(key="FooterTitle"):
-                    nameextract = st.secrets["credentials"]["usernames"]
-                    for username, details in nameextract.items():
-                        full_name = details["name"]
-                        st.markdown(
-                            f"""
-                            <h2 style="text-align:center;">{full_name}</h2>
-                            """,
-                            unsafe_allow_html=True,
-                        )
-
-                socialLinks = get_social_links()
-                footer_socialLinks = socialLinks.to_dict(orient="records")
-                buttons_list = [
-                    sac.ButtonsItem(
-                        icon=id["icon"],
-                        # color=id["color"],
-                        href=id["href"],
-                    )
-                    for id in footer_socialLinks
-                ]
-                sac.buttons(
-                    buttons_list,
-                    index=None,
-                    use_container_width=False,
-                    align="center",
-                    variant="outline",
-                )
-
-                st.divider()
-                now = datetime.now()
-                current_year = now.year
-                st.markdown(
-                    f"""
-                    <div style="text-align: center;">
-                        <p>Copyright &copy; {current_year} - {full_name}</p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-    Footer()
-
-    st.divider()
