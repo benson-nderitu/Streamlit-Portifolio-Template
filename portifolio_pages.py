@@ -5,8 +5,6 @@ from pathlib import Path
 import streamlit as st
 from streamlit_quill import st_quill
 
-from data.database import create_database
-
 set_page_config = st.set_page_config(initial_sidebar_state="collapsed", layout="wide")
 
 # Define the path to the local image folder

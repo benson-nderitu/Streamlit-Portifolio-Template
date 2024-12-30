@@ -201,7 +201,7 @@ def update_testimonials(df):
 @st.cache_data()
 def get_social_links():
     with sqlite3.connect(db_path) as conn:
-        query = "SELECT id, icon, color, href FROM social_links"
+        query = "SELECT id, label, icon, color, href FROM social_links"
         df = pd.read_sql_query(query, conn)
     return df
 
@@ -213,10 +213,10 @@ def update_social_link(df):
         for _, row in df.iterrows():
             cursor.execute(
                 """
-                INSERT INTO social_links (id, icon, color, href) 
+                INSERT INTO social_links (id, label, icon, color, href) 
                 VALUES (?, ?, ?, ?)
                 """,
-                (row["id"], row["icon"], row["color"], row["href"]),
+                (row["id"], row["label"], row["icon"], row["color"], row["href"]),
             )
         conn.commit()
 
@@ -225,7 +225,7 @@ def update_social_link(df):
 #     GET PROJECT CARDS
 # ==============================================================================
 @st.cache_data()
-def get_project_cards():
+def get_projects():
     return [
         {
             "projectId": 1,
@@ -239,6 +239,22 @@ def get_project_cards():
             "publishDate": "2023-12-10",
             "updateDate": "2023-12-12",
             "tags": ["Finance", "Budgeting", "Personal"],
+            "markdownContent": """
+                # Ultimate Personal Budgeting
+                **Finance** | **Budgeting** | **Personal**
+                
+                ### Description
+                Learn how to master your finances with our ultimate personal budgeting tool. This project helps you:
+                - Track your expenses
+                - Set financial goals
+                - Analyze spending habits
+                
+                #### Published On
+                December 10, 2023
+                
+                #### Last Updated
+                December 12, 2023
+            """,
         },
         {
             "projectId": 2,
@@ -252,6 +268,22 @@ def get_project_cards():
             "publishDate": "2023-11-20",
             "updateDate": "2023-11-25",
             "tags": ["Design", "UI/UX", "Creative"],
+            "markdownContent": """
+                # Project Two
+                **Design** | **UI/UX** | **Creative**
+                
+                ### Description
+                Discover the best practices in UI/UX design. This project covers:
+                - Creative ideation
+                - User-centered design
+                - Prototyping
+                
+                #### Published On
+                November 20, 2023
+                
+                #### Last Updated
+                November 25, 2023
+            """,
         },
         {
             "projectId": 3,
@@ -265,6 +297,22 @@ def get_project_cards():
             "publishDate": "2023-10-05",
             "updateDate": "2023-10-10",
             "tags": ["Development", "Web", "Technology"],
+            "markdownContent": """
+                # Project Three
+                **Development** | **Web** | **Technology**
+                
+                ### Description
+                Explore the latest in web development technologies:
+                - Front-end frameworks
+                - Back-end APIs
+                - Full-stack solutions
+                
+                #### Published On
+                October 5, 2023
+                
+                #### Last Updated
+                October 10, 2023
+            """,
         },
         {
             "projectId": 4,
@@ -277,6 +325,22 @@ def get_project_cards():
             "publishDate": "2023-10-05",
             "updateDate": "2023-10-10",
             "tags": ["Graphics", "Illustration", "Creative"],
+            "markdownContent": """
+                # Project Four
+                **Graphics** | **Illustration** | **Creative**
+                
+                ### Description
+                A creative journey into graphic design and illustration:
+                - Vector art
+                - Photo editing
+                - Storyboarding
+                
+                #### Published On
+                October 5, 2023
+                
+                #### Last Updated
+                October 10, 2023
+            """,
         },
         {
             "projectId": 5,
@@ -290,6 +354,22 @@ def get_project_cards():
             "publishDate": "2023-10-05",
             "updateDate": "2023-10-10",
             "tags": ["Education", "E-Learning", "Platform"],
+            "markdownContent": """
+                # Project Five
+                **Education** | **E-Learning** | **Platform**
+                
+                ### Description
+                Transform the way you learn with our e-learning platform:
+                - Interactive lessons
+                - Gamified quizzes
+                - Certificate courses
+                
+                #### Published On
+                October 5, 2023
+                
+                #### Last Updated
+                October 10, 2023
+            """,
         },
         {
             "projectId": 6,
@@ -303,5 +383,21 @@ def get_project_cards():
             "publishDate": "2023-10-05",
             "updateDate": "2023-10-10",
             "tags": ["Data", "Analytics", "Machine Learning"],
+            "markdownContent": """
+                # Project Six
+                **Data** | **Analytics** | **Machine Learning**
+                
+                ### Description
+                Dive into the world of data analytics and machine learning:
+                - Data visualization
+                - Predictive modeling
+                - Real-world applications
+                
+                #### Published On
+                October 5, 2023
+                
+                #### Last Updated
+                October 10, 2023
+            """,
         },
     ]

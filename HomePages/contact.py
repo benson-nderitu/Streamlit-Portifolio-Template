@@ -6,12 +6,15 @@ import streamlit as st
 # ================================================================
 def contact():
     primary_color = st.get_option("theme.primaryColor")
+    # with st.container(key="ContactMeHeaderContainer"):
     st.markdown(
-        f"""
-        <h1 style="font-size:2.5em; ">Contact <span style="color: {primary_color}; ">ME</span></h1>
-        """,
-        unsafe_allow_html=True,
-    )
+            f"""
+            <h1 style="font-size:2.5em; padding-left:50px; line-height:0;">Contact <span style="color: {primary_color}; ">ME</span></h1>
+            <hr style = "width:16%; margin-left:35px;">
+            """,
+            unsafe_allow_html=True,
+        )
+    # st.divider()
     with st.container(key="ContactContainer"):
         cntinfo, cntform = st.columns(2, gap="large")
         with cntinfo:
@@ -43,10 +46,10 @@ def contact():
 
                     message_placeholder = st.empty()
                     submitted = st.form_submit_button(
-                        "Submit",
+                        "Send Message",
                         help="Send Me Your Message",
                         type="primary",
-                        icon=":material/send_money:",
+                        icon=":material/forward_to_inbox:",
                         use_container_width=True,
                     )
                     if submitted:

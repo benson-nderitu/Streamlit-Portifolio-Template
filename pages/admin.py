@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 import streamlit_authenticator as stauth
+from components.footer import Footer
 
 from data.alldata import (
     get_experiences,
@@ -29,10 +30,6 @@ set_page_config = st.set_page_config(
     layout="wide",
 )
 
-from data.database import create_database
-
-create_database()  # Create databases if it does not exist
-
 # --------------------------------------
 #     SIDEBAR WIDTH
 # --------------------------------------
@@ -55,7 +52,7 @@ st.markdown(
             .st-emotion-cache-1jicfl2,
             .stMainBlockContainer.block-container {
                 width: 100%;
-                padding: 0rem 1rem 10rem;
+                padding: 0rem 1rem 5rem;
                 min-width: auto;
                 max-width: initial;
                 }
@@ -85,22 +82,25 @@ authenticator = stauth.Authenticate(
     st.secrets["cookie"]["key"],
     st.secrets["cookie"]["expiry_days"],
 )
-try:
-    # --------------------------------------
-    #     LOGIN PAGE
-    # --------------------------------------
-    authenticator.login(
-        fields={
-            "Form name": "Admin Page Login",
-            "Login": "Give Me Access",
-            "Username": "Admin Username",
-            "Password": "Admin Password",
-        },
-        # single_session=True,
-        # clear_on_submit=True,
-    )
-except Exception as e:
-    st.error(e)
+
+_, logincol, _ = st.columns([1,5,1])
+with logincol:
+    try:
+        # --------------------------------------
+        #     LOGIN PAGE
+        # --------------------------------------
+        authenticator.login(
+            fields={
+                "Form name": "Admin Page Login",
+                "Login": "Log Me In",
+                "Username": "Admin Username",
+                "Password": "Admin Password",
+            },
+            # single_session=True,
+            # clear_on_submit=True,
+        )
+    except Exception as e:
+        logincol.error(e)
 if st.session_state["authentication_status"]:
     # ----------------------
     #     SIDEBAR
@@ -113,13 +113,22 @@ if st.session_state["authentication_status"]:
 
         with st.container(key="NewPortfolioContainer"):
             if st.button(
-                "Add New Portfolio",
+                "New Project",
                 key="AddNewPortfolio",
                 icon=":material/add:",
                 type="primary",
                 use_container_width=True,
             ):
-                st.write("Add New Portfolio")
+                st.write("Adding New Project ...")
+                
+            if st.button(
+                "Edit Project",
+                key="EditProject",
+                icon=":material/edit:",
+                type="primary",
+                use_container_width=True,
+            ):
+                st.write("Adding New Project ...")
 
         st.divider()
         authenticator.logout()
@@ -132,6 +141,7 @@ if st.session_state["authentication_status"]:
     # ----------------------------------------------------------------
     #    PROFILE CONFIG
     # ----------------------------------------------------------------
+    @st.fragment()
     def profile():
         with st.expander("PROFILE", icon=":material/account_circle:"):
             # Fetch current profile data
@@ -148,8 +158,8 @@ if st.session_state["authentication_status"]:
 
             # Form to edit profile
             with st.form("edit_profile", border=False):
-                new_name = st.text_input("Name", value=name)
-                new_description = st.text_area("Description", value=description)
+                new_name = st.text_input("Catchy Title", value=name)
+                new_description = st.text_area("Catchy Description", value=description)
                 new_profile_image = st.text_input(
                     "Profile Image Url", value=profile_image
                 )
@@ -189,6 +199,7 @@ if st.session_state["authentication_status"]:
     # ----------------------------------------------------------------
     #     SERVICES CONFIG
     # ----------------------------------------------------------------
+    @st.fragment()
     def services():
         with st.expander("SERVICES", icon=":material/engineering:"):
             st.markdown(
@@ -249,6 +260,7 @@ if st.session_state["authentication_status"]:
     # ----------------------------------------------------------------
     #    SKILL DESCRIPTION CONFIG
     # ----------------------------------------------------------------
+    @st.fragment()
     def skills_description():
         with st.expander("SKILL DESCRIPTION", icon=":material/description:"):
             SkillDescription = get_skillDescription()
@@ -278,6 +290,7 @@ if st.session_state["authentication_status"]:
     # ----------------------------------------------------------------
     #    SKILLS CONFIG
     # ----------------------------------------------------------------
+    @st.fragment()
     def skills():
         with st.expander("SKILLS", icon=":material/school:"):
             skill_df = get_skills()
@@ -335,6 +348,7 @@ if st.session_state["authentication_status"]:
     # ----------------------------------------------------------------
     #       EXPERIENCE CONFIG
     # ----------------------------------------------------------------
+    @st.fragment()
     def story():
         with st.expander("EXPERIENCE", icon=":material/person_play:"):
             experiences_df = get_experiences()
@@ -394,6 +408,7 @@ if st.session_state["authentication_status"]:
     # ----------------------------------------------------------------
     #       TESTIMONIALS CONFIG
     # ----------------------------------------------------------------
+    @st.fragment()
     def testimonials():
         with st.expander("TESTIMONIALS", icon=":material/sentiment_satisfied:"):
             testimonials_df = get_testimonials()
@@ -457,6 +472,7 @@ if st.session_state["authentication_status"]:
     # ----------------------------------------------------------------
     #       SOCIAL LINKS CONFIG
     # ----------------------------------------------------------------
+    @st.fragment()
     def social_links():
         with st.expander("SOCIAL LINKS", icon=":material/public:"):
             st.markdown(
@@ -524,8 +540,10 @@ if st.session_state["authentication_status"]:
     story()
     testimonials()
     social_links()
+    Footer()
 
 elif st.session_state["authentication_status"] is False:
-    st.error("Username/password is incorrect")
+    logincol.error("Username/password is incorrect")
 elif st.session_state["authentication_status"] is None:
-    st.warning("Please enter your username and password")
+    logincol.warning("Please enter your username and password")
+    Footer()

@@ -5,18 +5,17 @@ from datetime import datetime
 import streamlit as st
 import streamlit_antd_components as sac
 
-from data.alldata import (
+from Data.alldata import (
     get_experiences,
     get_profile,
-    get_project_cards,
+    get_projects,
     get_services,
     get_skillDescription,
     get_skills,
     get_social_links,
     get_testimonials,
 )
-from data.database import create_database
-from portifolio_cards import carousel_with_autoslide
+# from portifolio_cards import carousel_with_autoslide
 
 primary_color = st.get_option("theme.primaryColor")
 
@@ -55,7 +54,6 @@ profile = get_profile()
 
 @st.fragment()
 def resume_about():
-
     # --------------------------------------
     #          HERO SECTION
     # --------------------------------------
@@ -67,23 +65,27 @@ def resume_about():
                 with st.container(key="CTAContainer"):
                     st.title(name)
                     st.write(description)
-                    ctacol, cta2col = st.columns([2, 3])
-                    with ctacol:
-                        if st.button(
-                            label="View Work",
-                            icon=":material/business_center:",
+                    st.markdown(f"""<hr style = "border: 1px solid transparent;">""",unsafe_allow_html=True)
+                    ctacol, cta2col, cta3col = st.columns(3)
+                    if ctacol.button(
+                            label="Services",
+                            icon=":material/support_agent:",
                             type="primary",
+                            use_container_width=True,
                         ):
                             st.write("View WORK")
 
-                    with cta2col:
-                        # if st.button(
-                        #     label="Services",
-                        #     icon=":material/support_agent:",
-                        # ):
-                        if st.button(
-                            label="Contact Me",
-                            icon=":material/call:",
+                    if cta2col.button(
+                        label="Skills",
+                        icon=":material/business_center:",
+                        use_container_width=True,
+                    ):
+                        st.write("View SERVICES")
+                    
+                    if cta3col.button(
+                            label="Work Experience", 
+                            icon=":material/person_play:",
+                            use_container_width=True,
                         ):
                             st.write("Contacting...")
 
@@ -99,7 +101,7 @@ def resume_about():
     @st.fragment
     def AboutMe():
         with st.container(key="AboutMeContainer"):
-            abttle, abtdesc, abtvideo = st.columns([1, 3, 2])
+            abttle, abtdesc, abtvideo = st.columns([1, 2, 2])
             with abttle:
                 with st.container(key="AboutMeTitleContainer"):
                     styled_title("About", "ME", primary_color)
@@ -109,12 +111,13 @@ def resume_about():
                     st.markdown(f"**{introduction}**")
                     st.write(f"{about_me_description}")
                     st.markdown(f"**{about_me_closingTag}**")
-                    viewcol, downloadcol = st.columns(2)
+                    viewcol, downloadcol = st.columns(2, gap="large")
                     with viewcol:
                         if st.button(
                             label="Read CV",
                             icon=":material/open_in_new:",
                             type="primary",
+                            use_container_width=True,
                         ):
                             st.write("View CV")
                     with downloadcol:
@@ -122,6 +125,7 @@ def resume_about():
                             label="Download CV",
                             icon=":material/download:",
                             key="download_resume",
+                            use_container_width=True,
                         ):
                             st.write("Downloading...")
                         # st.download_button(
@@ -141,6 +145,7 @@ def resume_about():
 
                     buttons_list = [
                         sac.ButtonsItem(
+                            label=id["label"],
                             icon=id["icon"],
                             color=id["color"],
                             href=id["href"],
@@ -237,7 +242,7 @@ def resume_about():
     @st.fragment
     def MySkills():
         with st.container(key="SkillsContainer"):
-            sklttl, skillscol = st.columns([1, 3])
+            sklttl, skillscol = st.columns([1, 4])
             with sklttl:
                 styled_title("My", "SKILLS", primary_color)
             with skillscol:
@@ -280,7 +285,7 @@ def resume_about():
     @st.fragment
     def MyStory():
         with st.container(key="ExperienceContainer"):
-            expttl, expscol = st.columns([1, 3])
+            expttl, expscol = st.columns([1, 4])
             with expttl:
                 styled_title("My", "STORY", primary_color)
             with expscol:
@@ -338,7 +343,7 @@ def resume_about():
     #             )
     #             return sorted_projects[:n]
 
-    #         project_cards = get_project_cards()
+    #         project_cards = get_projects()
     #         latest_projects = get_latest_projects(project_cards)
 
     #         cols = st.columns(3)
@@ -371,8 +376,11 @@ def resume_about():
                     _, imgcol, desccol, _ = st.columns([1, 2, 2, 1])
 
                     with imgcol:
-                        st.image(current_review["image"], width=200)
-                        #  use_container_width=True)
+                        st.image(
+                            current_review["image"],
+                            width=200,
+                            #  use_container_width=True)
+                        )
 
                     # Review text and details
                     with desccol:
