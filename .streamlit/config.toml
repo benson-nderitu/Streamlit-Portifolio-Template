@@ -9,4 +9,4 @@ font="sans serif"
 runOnSave = true
 
 [client]
-showSidebarNavigation = False
+showSidebarNavigation = false
