@@ -8,12 +8,12 @@ def contact():
     primary_color = st.get_option("theme.primaryColor")
     # with st.container(key="ContactMeHeaderContainer"):
     st.markdown(
-            f"""
+        f"""
             <h1 style="font-size:2.5em; padding-left:50px; line-height:0;">Contact <span style="color: {primary_color}; ">ME</span></h1>
             <hr style = "width:16%; margin-left:35px;">
             """,
-            unsafe_allow_html=True,
-        )
+        unsafe_allow_html=True,
+    )
     # st.divider()
     with st.container(key="ContactContainer"):
         cntinfo, cntform = st.columns(2, gap="large")
@@ -29,10 +29,13 @@ def contact():
                     "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                 )
                 st.divider()
-                st.write("+262 695 2601")
-                st.write("121 King Street, Australia")
-                st.write("youmail@gmail.com")
-                st.write("www.yourWebside.com")
+                st.markdown(":green[:material/call:] +2547 *** ***")
+                st.markdown(
+                    ":green[:material/location_pin:] 121 Kenyatta Avenue, Nairobi"
+                )
+                st.markdown(":green[:material/email:] youmail@gmail.com")
+
+                st.markdown(":green[:material/globe_uk:] www.yourWebside.com")
 
         with cntform:
             with st.container(key="contactformContainer"):

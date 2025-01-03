@@ -1,13 +1,12 @@
-import sqlite3
 import time
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 import streamlit_authenticator as stauth
-from components.footer import Footer
 
-from data.alldata import (
+from components.footer import Footer
+from Data.alldata import (
     get_experiences,
     get_profile,
     get_services,
@@ -24,11 +23,11 @@ from data.alldata import (
     update_testimonials,
 )
 
-set_page_config = st.set_page_config(
-    page_title="Admin Page",
-    page_icon=":material/admin_panel_settings:",
-    layout="wide",
-)
+# st.set_page_config(
+#     page_title="Admin Page",
+#     page_icon=":material/admin_panel_settings:",
+#     layout="wide",
+# )
 
 # --------------------------------------
 #     SIDEBAR WIDTH
@@ -65,10 +64,9 @@ st.markdown(
 #     PATH SETTINGS &  LOAD CSS
 # --------------------------------------
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
-css_file = current_dir.parent / "styles" / "style.css"
+css_file = current_dir / "styles" / "style.css"
 with open(css_file) as f:
     st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
-
 # --------------------------------------
 #     GET THEME COLOR
 primary_color = st.get_option("theme.primaryColor")
@@ -83,18 +81,19 @@ authenticator = stauth.Authenticate(
     st.secrets["cookie"]["expiry_days"],
 )
 
-_, logincol, _ = st.columns([1,5,1])
+_, logincol, _ = st.columns([1, 5, 1])
 with logincol:
+    info_container = st.empty()
     try:
         # --------------------------------------
         #     LOGIN PAGE
         # --------------------------------------
         authenticator.login(
             fields={
-                "Form name": "Admin Page Login",
-                "Login": "Log Me In",
-                "Username": "Admin Username",
-                "Password": "Admin Password",
+                "Form name": ":material/admin_panel_settings: &nbsp;Admin Page Login ",
+                "Login": "Log Me In &nbsp;&nbsp;:material/login:",
+                "Username": ":material/person: &nbsp;Admin Username",
+                "Password": ":material/lock: &nbsp;Admin Password",
             },
             # single_session=True,
             # clear_on_submit=True,
@@ -120,7 +119,12 @@ if st.session_state["authentication_status"]:
                 use_container_width=True,
             ):
                 st.write("Adding New Project ...")
-                
+
+            st.markdown(
+                f"""<div style= "padding:5px"></div>""",
+                unsafe_allow_html=True,
+            )
+
             if st.button(
                 "Edit Project",
                 key="EditProject",
@@ -131,11 +135,13 @@ if st.session_state["authentication_status"]:
                 st.write("Adding New Project ...")
 
         st.divider()
-        authenticator.logout()
+        authenticator.logout(
+            button_name="Log Out &nbsp;&nbsp;:material/directions_run:"
+        )
 
-    #================================================================
-    #        MAIN page
-    #================================================================
+    # ================================================================
+    #        MAIN ADMIN PAGE
+    # ================================================================
     # st.subheader("Settings")
 
     # ----------------------------------------------------------------
@@ -545,5 +551,8 @@ if st.session_state["authentication_status"]:
 elif st.session_state["authentication_status"] is False:
     logincol.error("Username/password is incorrect")
 elif st.session_state["authentication_status"] is None:
-    logincol.warning("Please enter your username and password")
+    info_container.success(
+        "Please enter Your Username and Password to access the Admin Page",
+        icon=":material/info:",
+    )
     Footer()

@@ -1,9 +1,12 @@
 [theme]
 base="light"
 primaryColor="#42bc7f"
-secondaryBackgroundColor="#ecf8f2"
 backgroundColor = "#f5f5f5"
+secondaryBackgroundColor="#ecf8f2"
 font="sans serif"
 
 [server]
 runOnSave = true
+
+[client]
+showSidebarNavigation = False

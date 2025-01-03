@@ -2,8 +2,8 @@ import os
 import sqlite3
 import threading
 from datetime import datetime
-from Data.alldata import get_projects
-from typing import List, Dict
+from typing import Dict, List
+
 
 # -----------------------------------------------------------
 #     create SQLite database and insert sample data
@@ -34,7 +34,7 @@ def create_database():
     """
     )
     conn.commit()
-    
+
     cursor.execute("SELECT * FROM profiles WHERE id = 1")
     if not cursor.fetchone():
         cursor.execute(
@@ -376,13 +376,157 @@ def create_database():
             )
         """)
     conn.commit()
-        
 
     cursor.execute("SELECT COUNT(*) FROM projects")
     count = cursor.fetchone()[0]
 
+    dummy_projects = [
+        {
+            "projectId": 1,
+            "projectTitle": "Ultimate Personal Budgeting",
+            "images": [
+                "static/images/1.png",
+                "static/images/2.png",
+                "static/images/3.png",
+            ],
+            "projectDescription": "This is the description for Project One.",
+            "publishDate": "2023-12-10",
+            "updateDate": "2023-12-12",
+            "tags": ["Finance", "Budgeting", "Personal"],
+            "markdownContent": """
+                    # Ultimate Personal Budgeting
+                    **Finance** | **Budgeting** | **Personal**
+                    
+                    ### Description
+                    Learn how to master your finances with our ultimate personal budgeting tool. This project helps you:
+                    - Track your expenses
+                    - Set financial goals
+                    - Analyze spending habits
+                    
+                """,
+        },
+        {
+            "projectId": 2,
+            "projectTitle": "Project Two",
+            "images": [
+                "static/images/1.png",
+                "static/images/2.png",
+                "static/images/3.png",
+            ],
+            "projectDescription": "This is the description for Project Two.",
+            "publishDate": "2023-11-20",
+            "updateDate": "2023-11-25",
+            "tags": ["Design", "UI/UX", "Creative"],
+            "markdownContent": """
+                    # Project Two
+                    **Design** | **UI/UX** | **Creative**
+                    
+                    ### Description
+                    Discover the best practices in UI/UX design. This project covers:
+                    - Creative ideation
+                    - User-centered design
+                    - Prototyping
+                    
+                """,
+        },
+        {
+            "projectId": 3,
+            "projectTitle": "Project Three",
+            "images": [
+                "static/images/1.png",
+                "static/images/2.png",
+                "static/images/3.png",
+            ],
+            "projectDescription": "This is the description for Project Three.",
+            "publishDate": "2023-10-05",
+            "updateDate": "2023-10-10",
+            "tags": ["Development", "Web", "Technology"],
+            "markdownContent": """
+                    # Project Three
+                    **Development** | **Web** | **Technology**
+                    
+                    ### Description
+                    Explore the latest in web development technologies:
+                    - Front-end frameworks
+                    - Back-end APIs
+                    - Full-stack solutions
+                    
+                """,
+        },
+        {
+            "projectId": 4,
+            "projectTitle": "Project Four",
+            "images": [
+                "static/images/6.svg",
+                "static/images/7.svg",
+            ],
+            "projectDescription": "This is the description for Project Four.",
+            "publishDate": "2023-10-05",
+            "updateDate": "2023-10-10",
+            "tags": ["Graphics", "Illustration", "Creative"],
+            "markdownContent": """
+                    # Project Four
+                    **Graphics** | **Illustration** | **Creative**
+                    
+                    ### Description
+                    A creative journey into graphic design and illustration:
+                    - Vector art
+                    - Photo editing
+                    - Storyboarding
+
+                """,
+        },
+        {
+            "projectId": 5,
+            "projectTitle": "Project Five",
+            "images": [
+                "static/images/1.png",
+                "static/images/2.png",
+                "static/images/3.png",
+            ],
+            "projectDescription": "This is the description for Project Five.",
+            "publishDate": "2023-10-05",
+            "updateDate": "2023-10-10",
+            "tags": ["Education", "E-Learning", "Platform"],
+            "markdownContent": """
+                    # Project Five
+                    **Education** | **E-Learning** | **Platform**
+                    
+                    ### Description
+                    Transform the way you learn with our e-learning platform:
+                    - Interactive lessons
+                    - Gamified quizzes
+                    - Certificate courses
+                    
+                """,
+        },
+        {
+            "projectId": 6,
+            "projectTitle": "Project Six",
+            "images": [
+                "static/images/1.png",
+                "static/images/2.png",
+                "static/images/3.png",
+            ],
+            "projectDescription": "This is the description for Project Six.",
+            "publishDate": "2023-10-05",
+            "updateDate": "2023-10-10",
+            "tags": ["Data", "Analytics", "Machine Learning"],
+            "markdownContent": """
+                    # Project Six
+                    **Data** | **Analytics** | **Machine Learning**
+                    
+                    ### Description
+                    Dive into the world of data analytics and machine learning:
+                    - Data visualization
+                    - Predictive modeling
+                    - Real-world applications
+
+                """,
+        },
+    ]
+
     if count == 0:
-        dummy_projects = get_projects()
         for project in dummy_projects:
             cursor.execute("""
                 INSERT INTO projects (projectId, projectTitle, images, projectDescription, publishDate, updateDate, tags, markdownContent)

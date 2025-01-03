@@ -159,7 +159,8 @@ hr {
 .st-key-NewPortfolioContainer {
     margin-top: 50px;
     margin-bottom: 50px;
-    padding: 10px;
+    justify-content: space-between;
+    justify-items: center;
 
 }
 
