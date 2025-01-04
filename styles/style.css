@@ -104,7 +104,9 @@ hr {
 .st-key-ExperienceContainer,
 .st-key-PortfolioContainer,
 .st-key-TestimonialContainer,
-.st-key-ClientsContainer {
+.st-key-ClientsContainer,
+.st-key-RecognitionContainer,
+.st-key-StatisticsContainer {
     padding: 50px;
     border-top: 1px solid #e0e0e0;
 }
@@ -117,7 +119,9 @@ hr {
     .st-key-ExperienceContainer,
     .st-key-PortfolioContainer,
     .st-key-TestimonialContainer,
-    .st-key-ClientsContainer {
+    .st-key-ClientsContainer,
+    .st-key-RecognitionContainer,
+    .st-key-StatisticsContainer {
         padding: 5px;
     }
 }
@@ -129,7 +133,8 @@ hr {
 .st-key-AboutMeVideoContainer,
 .st-key-MyServiceslistContainer,
 .st-key-SkillsListContainer,
-.st-key-ExperienceListContainer {
+.st-key-ExperienceListContainer,
+.st-key-RecognitionListContainer {
     margin-top: 70px;
 }
 
@@ -139,7 +144,8 @@ hr {
     .st-key-AboutMeVideoContainer,
     .st-key-MyServiceslistContainer,
     .st-key-SkillsListContainer,
-    .st-key-ExperienceListContainer {
+    .st-key-ExperienceListContainer,
+    .st-key-RecognitionListContainer {
         margin-top: 0px !important;
     }
 
@@ -199,4 +205,13 @@ hr {
         margin-top: 20px;
         padding: 5px;
     }
+}
+
+.st-key-foocontainer {
+    border-radius: 50% !important;
+    width: 50 px !important;
+    height: 50px !important;
+    border: 1px solid #2ecc71 !important;
+    justify-content: center !important;
+    justify-items: center !important;
 }

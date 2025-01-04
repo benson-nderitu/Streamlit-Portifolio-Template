@@ -23,11 +23,11 @@ from Data.alldata import (
     update_testimonials,
 )
 
-# st.set_page_config(
-#     page_title="Admin Page",
-#     page_icon=":material/admin_panel_settings:",
-#     layout="wide",
-# )
+st.set_page_config(
+    page_title="Admin Page",
+    page_icon=":material/admin_panel_settings:",
+    layout="wide",
+)
 
 # --------------------------------------
 #     SIDEBAR WIDTH
@@ -64,9 +64,10 @@ st.markdown(
 #     PATH SETTINGS &  LOAD CSS
 # --------------------------------------
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
-css_file = current_dir / "styles" / "style.css"
+css_file = current_dir.parent / "styles" / "style.css"
 with open(css_file) as f:
     st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
+
 # --------------------------------------
 #     GET THEME COLOR
 primary_color = st.get_option("theme.primaryColor")
@@ -105,6 +106,11 @@ if st.session_state["authentication_status"]:
     #     SIDEBAR
     # ----------------------
     with st.sidebar:
+        st.page_link("streamlit_app.py", label="Home", icon=":material/home:")
+        st.page_link(
+            "pages/admin.py", label="Admin", icon=":material/admin_panel_settings:"
+        )
+        st.divider()
         st.markdown(
             f'### Welcome Back <br><span style="color: {primary_color}; line-height: 2;"><strong>{st.session_state["name"]}</strong></span>',
             unsafe_allow_html=True,

@@ -4,6 +4,7 @@ from datetime import datetime
 
 import streamlit as st
 import streamlit_antd_components as sac
+import streamlit_shadcn_ui as ui
 
 from Data.alldata import (
     get_experiences,
@@ -15,6 +16,7 @@ from Data.alldata import (
     get_social_links,
     get_testimonials,
 )
+
 # from portifolio_cards import carousel_with_autoslide
 
 primary_color = st.get_option("theme.primaryColor")
@@ -23,7 +25,9 @@ primary_color = st.get_option("theme.primaryColor")
 # ----------------------------------------------------------------
 #       REUSABLE HEADER STYLE
 # ----------------------------------------------------------------
-def styled_title(normal_text, styled_text, styled_color="blue"):
+def styled_title(normal_text=None, styled_text=None, styled_color="blue"):
+    normal_text = normal_text or ""
+    styled_text = styled_text or ""
     st.markdown(
         f"""
         <h1 style="font-size:2.5em; line-height: 0; ">{normal_text}</h1>
@@ -32,10 +36,6 @@ def styled_title(normal_text, styled_text, styled_color="blue"):
         unsafe_allow_html=True,
     )
 
-
-# Applying the  function
-# styled_title("Welcome to", "Streamlit", "red")
-# styled_title("Powered by", "Python", "purple")
 
 # ----------------------------------------------------------------
 #             Fetch current profile data
@@ -65,15 +65,18 @@ def resume_about():
                 with st.container(key="CTAContainer"):
                     st.title(name)
                     st.write(description)
-                    st.markdown(f"""<hr style = "border: 1px solid transparent;">""",unsafe_allow_html=True)
+                    st.markdown(
+                        f"""<hr style = "border: 1px solid transparent;">""",
+                        unsafe_allow_html=True,
+                    )
                     ctacol, cta2col, cta3col = st.columns(3)
                     if ctacol.button(
-                            label="Services",
-                            icon=":material/support_agent:",
-                            type="primary",
-                            use_container_width=True,
-                        ):
-                            st.write("View WORK")
+                        label="Services",
+                        icon=":material/support_agent:",
+                        type="primary",
+                        use_container_width=True,
+                    ):
+                        st.write("View WORK")
 
                     if cta2col.button(
                         label="Skills",
@@ -81,13 +84,13 @@ def resume_about():
                         use_container_width=True,
                     ):
                         st.write("View SERVICES")
-                    
+
                     if cta3col.button(
-                            label="Work Experience", 
-                            icon=":material/person_play:",
-                            use_container_width=True,
-                        ):
-                            st.write("Contacting...")
+                        label="Work Experience",
+                        icon=":material/person_play:",
+                        use_container_width=True,
+                    ):
+                        st.write("Contacting...")
 
             with col2:
                 with st.container(key="profileImageContainer"):
@@ -104,7 +107,11 @@ def resume_about():
             abttle, abtdesc, abtvideo = st.columns([1, 2, 2])
             with abttle:
                 with st.container(key="AboutMeTitleContainer"):
-                    styled_title("About", "ME", primary_color)
+                    styled_title(
+                        normal_text="About",
+                        styled_text="ME",
+                        styled_color=primary_color,
+                    )
 
             with abtdesc:
                 with st.container(key="AboutMeDescriptionContainer"):
@@ -171,6 +178,27 @@ def resume_about():
     AboutMe()
 
     # ----------------------------------------------------------------
+    #      STATISTICS SECTION
+    # ----------------------------------------------------------------
+    @st.fragment
+    def Statistics():
+        with st.container(key="StatisticsContainer"):
+            styled_title(
+                normal_text=None,
+                styled_text=None,
+                styled_color=primary_color,
+            )
+            mtrc1, mtrc2, mtrc3, mtrc4 = st.columns(4)
+            foocontainer = mtrc1.container(
+                key="foocontainer",
+            )
+            foocontainer.markdown(get_projects().shape[0])
+            st.subheader("Portfolio")
+            st.write("Number of portfolio items: ", get_projects().shape[0])
+
+    Statistics()
+
+    # ----------------------------------------------------------------
     #      MY SERVICES SECTION
     # ----------------------------------------------------------------
     @st.fragment
@@ -178,7 +206,9 @@ def resume_about():
         with st.container(key="MyServicesContainer"):
             msrttl, servscol = st.columns([1, 4])
             with msrttl:
-                styled_title("My", "SERVICES", primary_color)
+                styled_title(
+                    normal_text="My", styled_text="SERVICES", styled_color=primary_color
+                )
             with servscol:
 
                 def render_components(services):
@@ -244,7 +274,9 @@ def resume_about():
         with st.container(key="SkillsContainer"):
             sklttl, skillscol = st.columns([1, 4])
             with sklttl:
-                styled_title("My", "SKILLS", primary_color)
+                styled_title(
+                    normal_text="My", styled_text="SKILLS", styled_color=primary_color
+                )
             with skillscol:
                 with st.container(key="SkillsListContainer"):
                     descrcol, progcol = st.columns(2, gap="large")
@@ -287,31 +319,32 @@ def resume_about():
         with st.container(key="ExperienceContainer"):
             expttl, expscol = st.columns([1, 4])
             with expttl:
-                styled_title("My", "STORY", primary_color)
-            with expscol:
-                with st.container(key="ExperienceListContainer"):
+                styled_title(
+                    normal_text="My", styled_text="STORY", styled_color=primary_color
+                )
+            with expscol.container(key="ExperienceListContainer"):
 
-                    def render_timeline(timeline_data):
-                        for entry in timeline_data:
-                            year = entry.get("year", "Unknown Year")
-                            title = entry.get("title", "Untitled")
-                            role = entry.get("role", "No Role")
-                            description = entry.get(
-                                "description", "No description available."
-                            )
+                def render_timeline(timeline_data):
+                    for entry in timeline_data:
+                        year = entry.get("year", "Unknown Year")
+                        title = entry.get("title", "Untitled")
+                        role = entry.get("role", "No Role")
+                        description = entry.get(
+                            "description", "No description available."
+                        )
 
-                            with st.container():
-                                yrcol, expcol = st.columns([1, 5])
-                                with yrcol:
-                                    st.write(f"#### {year}")
-                                with expcol:
-                                    st.markdown(f"### {title}")
-                                    st.markdown(f"**{role}**")
-                                    st.write(description)
+                        with st.container():
+                            yrcol, expcol = st.columns([1, 5])
+                            with yrcol:
+                                st.write(f"#### {year}")
+                            with expcol:
+                                st.markdown(f"### {title}")
+                                st.markdown(f"**{role}**")
+                                st.write(description)
 
-                    experience = get_experiences()
-                    experience_entries = experience.to_dict(orient="records")
-                    render_timeline(experience_entries)
+                experience = get_experiences()
+                experience_entries = experience.to_dict(orient="records")
+                render_timeline(experience_entries)
 
     MyStory()
 
@@ -322,7 +355,7 @@ def resume_about():
     # @st.fragment
     # def portfolio_section():
     #     with st.container(key="PortfolioContainer"):
-    #         styled_title("My", "PORTFOLIO", primary_color)
+    # styled_title(normal_text="My", styled_text="PORTFOLIO", styled_color=primary_color)
     #         ttlcol, rdtbtncol = st.columns([3, 1])
     #         with rdtbtncol:
     #             if st.button(
@@ -352,6 +385,55 @@ def resume_about():
     #                 carousel_with_autoslide(project)
 
     # portfolio_section()
+    # ----------------------------------------------------------------
+    #      RECOGNITION SECTION
+    # ----------------------------------------------------------------
+    @st.fragment
+    def Recognition():
+        with st.container(key="RecognitionContainer"):
+            recgttl, recgscol = st.columns([1, 4])
+            with recgttl:
+                styled_title(styled_text="Recognition", styled_color=primary_color)
+            with recgscol.container(key="RecognitionListContainer"):
+
+                # Function to display items in the desired format
+                def display_section(
+                    title, items, icon=":material/check_circle:", color=":primary"
+                ):
+                    """
+                    Displays a section with a subheader and formatted items using Streamlit.
+
+                    Args:
+                        title (str): Title of the section (e.g., "Awards Received").
+                        items (list): List of items to display under the section.
+                        icon (str): Icon to use before each item. Default is ":material/check_circle:".
+                        color (str): Color styling for the icon. Default is ":primary:".
+                    """
+                    st.subheader(title, divider=True)
+                    formatted_items = "\n\n".join(
+                        [f"{color}[{icon}] {item}" for item in items]
+                    )
+                    st.markdown(formatted_items)
+
+                certifications = [
+                    "Certified Data Scientist (Google)",
+                    "AWS Cloud Practitioner",
+                    "UX Design Bootcamp Certification",
+                ]
+
+                awards = [
+                    "Innovator Award 2023",
+                    "Best Data Visualization, XYZ Hackathon",
+                    "Client Excellence Award",
+                ]
+                col1, col2 = st.columns(2, gap="large")
+                with col1:
+                    display_section("Certifications", certifications)
+
+                with col2:
+                    display_section("Awards Received", awards)
+
+    Recognition()
 
     # ----------------------------------------------------------------
     #      TESTIMONIAL SECTION
@@ -401,28 +483,29 @@ def resume_about():
                         if st.button(
                             "",
                             key="prev_review",
-                            help="View previous",
+                            help="Previous",
                             type="tertiary",
                             icon=":material/arrow_back_ios:",
                         ):
                             st.session_state.review_index = (
                                 st.session_state.review_index - 1
                             ) % len(reviews)
+                            st.rerun()
 
                     with rightcol:
                         if st.button(
                             "",
                             key="next_review",
-                            help="View next",
+                            help="Next",
                             type="tertiary",
                             icon=":material/arrow_forward_ios:",
                         ):
                             st.session_state.review_index = (
                                 st.session_state.review_index + 1
                             ) % len(reviews)
+                            st.rerun()
 
-            testimonials_data = get_testimonials()
-            testimonials_data = testimonials_data.to_dict(orient="records")
+            testimonials_data = get_testimonials().to_dict(orient="records")
             testimonials(testimonials_data)
 
     Testimonials()
@@ -430,9 +513,80 @@ def resume_about():
     # ----------------------------------------------------------------
     #        CLIENTS SECTION
     # ----------------------------------------------------------------
-    @st.fragment
-    def Clients():
-        with st.container(key="ClientsContainer"):
-            st.title("Clients")
+    # @st.fragment
+    # def Clients():
+    #     with st.container(key="ClientsContainer"):
+    #         # styled_title(styled_text="Clients", styled_color=primary_color)
 
-    Clients()
+    #         # SOURCE: https://codepen.io/kevinwitkowski/pen/MWbxNGe
+    #         carousel_html = """
+    #         <style>
+    #         body {
+    #             margin: 0;
+    #             padding: 0;
+    #             font-family: sans-serif;
+    #             display: flex;
+    #             justify-content: center;
+    #             align-items: center;
+    #             height: 100vh;
+    #             background-color: transparent;
+    #         }
+    #         .slider {
+    #             height: 100px;
+    #             margin: auto;
+    #             overflow: hidden;
+    #             position: relative;
+    #             width: 100%;
+    #             background: red !important;
+    #         }
+    #         .slide-track {
+    #             animation: scroll 40s linear infinite;
+    #             display: flex;
+    #             width: calc(250px * 14);
+
+    #         }
+    #         .slide {
+    #             height: 100px;
+    #             width: 250px;
+    #         }
+    #         .slide img {
+    #             width: 100%;
+    #             height: 100%;
+    #             object-fit: cover;
+    #         }
+    #         @keyframes scroll {
+    #             0% { transform: translateX(0); }
+    #             100% { transform: translateX(calc(-250px * 7)); }
+    #         }
+    #         </style>
+
+    #         <div class="slider">
+    #             <div class="slide-track">
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/2.png" alt="Logo 1"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/3.png" alt="Logo 2"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/4.png" alt="Logo 3"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/5.png" alt="Logo 4"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/6.png" alt="Logo 5"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/7.png" alt="Logo 6"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/1.png" alt="Logo 7"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/2.png" alt="Logo 1"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/3.png" alt="Logo 2"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/4.png" alt="Logo 3"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/5.png" alt="Logo 4"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/6.png" alt="Logo 5"></div>
+    #                 <div class="slide"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/557257/7.png" alt="Logo 6"></div>
+
+    #             </div>
+    #         </div>
+    #         """
+
+    #         # Render the carousel in Streamlit
+    #         st.components.v1.html(carousel_html, height=150)
+
+    # Clients()
+
+
+# TODO: Add a section for statistics
+
+# 1. Number of blog posts or portfolio items.
+# 2. Number of followers or subscribers.
