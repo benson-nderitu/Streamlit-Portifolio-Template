@@ -188,13 +188,81 @@ def resume_about():
                 styled_text=None,
                 styled_color=primary_color,
             )
-            mtrc1, mtrc2, mtrc3, mtrc4 = st.columns(4)
-            foocontainer = mtrc1.container(
-                key="foocontainer",
+
+            get_projects().shape[0]
+            from components.horizontal import st_horizontal
+            from components.streamlit_donut import st_donut
+
+            progress1 = st.slider("Progress", -100, 100, 10)
+            # size = 72
+            size = 200
+            text_size = 24
+            with st_horizontal():
+                st_donut(
+                    label="Site Completion",
+                    value=progress1,
+                    outOf=100,
+                    units="%",
+                    size=size,
+                    value_text_color="purple",
+                    text_size=text_size,
+                    background_stroke_width=30,
+                    arc_stroke_width=40,
+                    # direction="anticlockwise",
+                    delta="-10%",
+                    rounded=True,
+                    label_visibility=False,
+                    hide_background=True,
+                )
+                st_donut(
+                    label="Site Completion",
+                    value=progress1,
+                    outOf=100,
+                    units="$",
+                    background_stroke_width=20,
+                    arc_stroke_width=50,
+                    size=size,
+                    text_size=text_size,
+                    direction="anticlockwise",
+                    rounded=False,
+                    label_visibility=False,
+                    hide_background=True,
+                )
+
+        with st_horizontal():
+            st_donut(
+                label="Site Completion",
+                value=progress1,
+                units="%",
+                delta="10%",
+                direction="clockwise",
+                hide_background=True,
+                label_visibility=False,
             )
-            foocontainer.markdown(get_projects().shape[0])
-            st.subheader("Portfolio")
-            st.write("Number of portfolio items: ", get_projects().shape[0])
+            st_donut(
+                label="Site Completion",
+                value=progress1,
+                units="%",
+                delta="10%",
+                direction="anticlockwise",
+                hide_background=True,
+                rounded=False,
+                label_visibility=False,
+            )
+            # st_donut(
+            #         label="Site Completion",
+            #         value=progress1,
+            #         outOf=100,
+            #         units="%",
+            #         size=size,
+            #         value_text_color="purple",
+            #         text_size=text_size,
+            #         background_stroke_width=50,
+            #         # direction="anticlockwise",
+            #         rounded=True,
+            #         delta="-10%",
+            #         # label_visibility=False,
+            #     )
 
     Statistics()
 

@@ -70,7 +70,7 @@ st.markdown(
             # border-image: linear-gradient(to right, #3498db, #2ecc71, #e74c3c, #f1c40f, #34495e, #f39c12);
             # border-image-slice: 1;
             border-bottom: 1px solid {border_color};
-            background-color: {navBgColor};
+            background-color: navBgColor;
             box-shadow: 4px 4px 10px {shadowColor};
         }}
         @media (max-width: 820px) {{
@@ -116,17 +116,17 @@ def main():
             with st.container(key="LOGOContainer"):
 
                 # 1. DYNAMIC COLORS
-                # st.markdown(
-                #     f'<h3 style="color:{primaryColor};">My <span style="color:orange;">Logo</span></h3>',
-                #     unsafe_allow_html=True,
-                # )
+                st.markdown(
+                    f'<h3 style="color:{primaryColor};">My <span style="color:orange;">Logo</span></h3>',
+                    unsafe_allow_html=True,
+                )
 
                 # 2.FIXED COLORS
                 # st.subheader(":green[MY] :rainbow[LOGO]")
 
                 # 3.LOGO IMAG
                 # st.image("static/logo1.png")
-                st.image("static/logo.png")
+                # st.image("static/logo.png")
 
         with navcol:
             with st.container(key="MenuContainer"):
@@ -140,7 +140,7 @@ def main():
                     manual_select=st.session_state.get("menusel", 0),
                     styles={
                         "container": {
-                            "background-color": navBgColor,
+                            "background-color": "transparent",
                             "border-radius": "0 !important",
                             "padding": "0.2rem 0 !important",
                         },

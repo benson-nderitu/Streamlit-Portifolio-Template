@@ -39,7 +39,7 @@
 
 
 # import streamlit as st
-# from streamlit_float import float_css_helper, float_init
+# from streamlit_float import float_css_helper,
 
 # # Initialize the float feature
 # float_init()
@@ -187,103 +187,38 @@
 
 
 # ------------------------------------------------------------------------------
-
-import numpy as np
 import streamlit as st
+from streamlit_donut import st_donut
 
-
-# Inspired by: https://codepen.io/benjaminlry/pen/xQydro?anon=true&view=pen
-def Metric_circle(
-    Label=None,
-    progress=0,
+st_donut(
+    label="Project Completion",
+    value=89,
     outOf=100,
-    units="%",
-    background_stroke_width=5,
-    progress_stroke_width=None,
-    progress_color=None,
-    text_color=None,
-    size=100,
-    text_size=18,
-    direction="anticlockwise",
-):
-    # Get the primary color from Streamlit theme as Default
-    if not primary_color:
-        primary_color = st.get_option("theme.primaryColor")
-    if progress_stroke_width is None:
-        progress_stroke_width = background_stroke_width
+    units="days",
+    size=150,
+    value_text_color="purple",
+    text_size=24,
+    background_stroke_width=10,
+    arc_stroke_width=20,
+    direction="clockwise",
+    delta="90%",
+    rounded=True,
+    label_visibility=True,
+    hide_background=True,
+)
 
-    # Circle % of the parent size
-    circle_size = 0.95 * size
-    radius = (circle_size - max(background_stroke_width, progress_stroke_width)) / 2
-    circumference = 2 * np.pi * radius
-
-    # Stroke-dashoffset for progress (fraction of progress/outOf)
-    progress_fraction = progress / outOf
-    progress_length = progress_fraction * circumference
-
-    # Text color defaults to primary color
-    if not text_color:
-        text_color = primary_color
-    if direction == "clockwise":
-        dash_offset = (
-            circumference - progress_length
-        )  # Starts from the top and goes clockwise
-        svg = f"""
-        <svg width="{size}px" height="{size}px" viewBox="0 0 {circle_size} {circle_size}" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background Circle -->
-            <circle cx="{circle_size/2}" cy="{circle_size/2}" r="{radius}" stroke="#ddd" stroke-width="{background_stroke_width}" fill="transparent"/>
-            <!-- Progress Circle -->
-            <circle cx="{circle_size/2}" cy="{circle_size/2}" r="{radius}" stroke="{primary_color}" stroke-width="{progress_stroke_width}" fill="transparent" 
-                stroke-dasharray="{circumference}" stroke-dashoffset="{dash_offset}" stroke-linecap="round" transform="rotate(-90, {circle_size/2}, {circle_size/2})"/>
-            <!-- Center Text -->
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="{text_size}" fill="{text_color}">{progress}{units}</text>
-        </svg>
-        """
-    else:  # Starts from the top and goes anticlockwise
-        dash_offset = progress_length
-        if progress_stroke_width > background_stroke_width:
-            progress_stroke_width = background_stroke_width
-        if progress_stroke_width < background_stroke_width:
-            progress_stroke_width = background_stroke_width
-        svg = f"""
-        <svg width="{size}px" height="{size}px" viewBox="0 0 {circle_size} {circle_size}" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background Circle -->
-            <circle cx="{circle_size/2}" cy="{circle_size/2}" r="{radius}" stroke="{primary_color}" stroke-width="{background_stroke_width}" fill="transparent" 
-                stroke-dasharray="{circumference}" stroke-dashoffset="0"/>
-            <!-- Progress Circle -->
-            <circle cx="{circle_size/2}" cy="{circle_size/2}" r="{radius}" stroke="#ddd" stroke-width="{progress_stroke_width}" fill="transparent" 
-                stroke-dasharray="{circumference}" stroke-dashoffset="{dash_offset}" stroke-linecap="butt" transform="rotate(-90, {circle_size/2}, {circle_size/2})"/>
-            <!-- Center Text -->
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="{text_size}" fill="{text_color}">{progress}{units}</text>
-        </svg>
-        """
-    if Label:
-        st.markdown(f"**{Label}**")
-    st.markdown(svg, unsafe_allow_html=True)
-
-
-progress1 = st.number_input("", step=100)
-col1, col2 = st.columns(2, border=True)
-with col1:
-    Metric_circle(
-        Label="Site Completion",
-        progress=progress1,
-        outOf=1000,
-        units="%",
-        background_stroke_width=20,
-        size=200,
-        direction="anticlockwise",
-    )
-with col2:
-    # Example 2: Simple Metric Circle (Clockwise)
-    Metric_circle(
-        Label=None,
-        progress=progress1,
-        outOf=1000,
-        units="$",
-        text_size=34,
-        background_stroke_width=5,
-        progress_stroke_width=10,
-        size=200,
-        direction="clockwise",
-    )
+st_donut(
+    label="Counterclockwise",
+    value=89,
+    outOf=100,
+    units="days",
+    value_text_color="purple",
+    text_size=24,
+    background_stroke_width=30,
+    arc_stroke_width=40,
+    direction="counterclockwise",
+    delta="90%",
+    rounded=True,
+    label_visibility=False,
+    hide_background=True,
+)

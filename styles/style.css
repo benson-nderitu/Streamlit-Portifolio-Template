@@ -126,6 +126,11 @@ hr {
     }
 }
 
+.st-key-StatisticsContainer {
+    padding-bottom: 100px;
+}
+
+
 /*=========================
 	HEADERS SECTIONS
 ===========================*/
@@ -205,13 +210,4 @@ hr {
         margin-top: 20px;
         padding: 5px;
     }
-}
-
-.st-key-foocontainer {
-    border-radius: 50% !important;
-    width: 50 px !important;
-    height: 50px !important;
-    border: 1px solid #2ecc71 !important;
-    justify-content: center !important;
-    justify-items: center !important;
 }

@@ -29,13 +29,13 @@ def contact():
                     "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                 )
                 st.divider()
-                st.markdown(":green[:material/call:] +2547 *** ***")
+                st.markdown(":primary[:material/call:] +2547 *** ***")
                 st.markdown(
-                    ":green[:material/location_pin:] 121 Kenyatta Avenue, Nairobi"
+                    ":primary[:material/location_pin:] 121 Kenyatta Avenue, Nairobi"
                 )
-                st.markdown(":green[:material/email:] youmail@gmail.com")
+                st.markdown(":primary[:material/email:] youmail@gmail.com")
 
-                st.markdown(":green[:material/globe_uk:] www.yourWebside.com")
+                st.markdown(":primary[:material/globe_uk:] www.yourWebside.com")
 
         with cntform:
             with st.container(key="contactformContainer"):

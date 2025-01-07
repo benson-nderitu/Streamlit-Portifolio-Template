@@ -27,6 +27,7 @@ st.set_page_config(
     page_title="Admin Page",
     page_icon=":material/admin_panel_settings:",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 # --------------------------------------
@@ -92,7 +93,7 @@ with logincol:
         authenticator.login(
             fields={
                 "Form name": ":material/admin_panel_settings: &nbsp;Admin Page Login ",
-                "Login": "Log Me In &nbsp;&nbsp;:material/login:",
+                "Login": ":primary[**Log Me In** &nbsp;&nbsp;:material/login:]",
                 "Username": ":material/person: &nbsp;Admin Username",
                 "Password": ":material/lock: &nbsp;Admin Password",
             },
@@ -142,7 +143,7 @@ if st.session_state["authentication_status"]:
 
         st.divider()
         authenticator.logout(
-            button_name="Log Out &nbsp;&nbsp;:material/directions_run:"
+            button_name=":primary[**Log Out** &nbsp;&nbsp;:material/directions_run:]"
         )
 
     # ================================================================
