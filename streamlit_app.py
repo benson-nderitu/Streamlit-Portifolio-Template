@@ -1,4 +1,3 @@
-from datetime import datetime
 from pathlib import Path
 
 import streamlit as st
@@ -6,17 +5,21 @@ from streamlit_float import *
 from streamlit_option_menu import option_menu
 
 from components.footer import Footer
-from Data.database import create_database
-from HomePages.about import resume_about
-from HomePages.contact import contact
-from HomePages.portifolio_cards import portifolio_projects
+from data.database import create_database
+from homePages.about import resume_about
+from homePages.contact import contact
+from homePages.portfolio import portfolio_projects
 
+name_extract = st.secrets["credentials"]["usernames"]
+for username, details in name_extract.items():
+    full_name = details["name"]
 st.set_page_config(
-    page_title="John Doe",
+    page_title=full_name,
     page_icon=":material/rocket_launch:",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
+
 # -------------------------
 #    Get THEME COLORS
 # -------------------------
@@ -91,15 +94,6 @@ css_file = current_dir / "styles" / "style.css"
 with open(css_file) as f:
     st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
 
-# --------------------------------------
-#     SIDEBAR
-# --------------------------------------
-with st.sidebar:
-    st.page_link("streamlit_app.py", label="Home", icon=":material/home:")
-    st.page_link(
-        "pages/admin.py", label="Admin", icon=":material/admin_panel_settings:"
-    )
-
 
 @st.fragment()
 def main():
@@ -116,17 +110,14 @@ def main():
             with st.container(key="LOGOContainer"):
 
                 # 1. DYNAMIC COLORS
-                st.markdown(
-                    f'<h3 style="color:{primaryColor};">My <span style="color:orange;">Logo</span></h3>',
-                    unsafe_allow_html=True,
-                )
+                # st.subheader(":primary[MY] :orange[LOGO]")
 
                 # 2.FIXED COLORS
                 # st.subheader(":green[MY] :rainbow[LOGO]")
 
                 # 3.LOGO IMAG
                 # st.image("static/logo1.png")
-                # st.image("static/logo.png")
+                st.image("static/logo.png")
 
         with navcol:
             with st.container(key="MenuContainer"):
@@ -163,7 +154,7 @@ def main():
         resume_about()
 
     elif menu_selection == "My Portfolio":
-        portifolio_projects()
+        portfolio_projects()
 
     elif menu_selection == "Contact":
         contact()

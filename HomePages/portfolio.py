@@ -1,9 +1,10 @@
 from datetime import datetime
 
 import streamlit as st
+from streamlit_comments import st_comments
 
 from components.horizontal import st_horizontal
-from Data.alldata import get_projects
+from data.allData import get_projects
 
 primary_color = st.get_option("theme.primaryColor")
 
@@ -55,7 +56,7 @@ def parse_dataframe(df):
 # ----------------------------------------------------------------
 #       PROJECT-CARDS IMAGE CAROUSEL USING REGULAR BUTTONS
 # ----------------------------------------------------------------
-def carousel_with_autoslide(project):
+def carousel(project):
     with st.container(border=True):
         slides = [{"image": img} for img in project["images"]]
         description = project["projectDescription"]
@@ -125,7 +126,7 @@ def carousel_with_autoslide(project):
 #       PROJECTS NAVIGATION USING REGULAR BUTTONS
 # ----------------------------------------------------------------
 @st.fragment()
-def portifolio_projects():
+def portfolio_projects():
     if "page" not in st.session_state:
         st.session_state.page = "projects_Cards"
         st.session_state.current_blog = None
@@ -139,7 +140,7 @@ def portifolio_projects():
         cols = st.columns(3)
         for i, project in enumerate(filtered_projects):
             with cols[i % 3]:
-                carousel_with_autoslide(project)
+                carousel(project)
 
     def show_project():
         projects = parse_dataframe(get_projects()).to_dict(orient="records")
@@ -158,18 +159,17 @@ def portifolio_projects():
         with st_horizontal():
 
             if st.button(
-                "Back",
-                icon=":material/arrow_back_ios:",
+                ":material/arrow_back_ios: Back",
                 type="tertiary",
-                # help="Go back ALL projects",
+                key="BackToAllProjects",
                 use_container_width=True,
             ):
                 st.session_state.page = "projects_Cards"
                 st.rerun()
             st.write(
-                f"""<div style="font-size:12px; padding: none; margin:none; text-align:end; white-space: nowrap;">
-    <p>Published: <span style='font-weight: bold;'>{publish_date}</span> &nbsp; | &nbsp; Last Updated: <span style='font-weight: bold;'>{last_updated}</span></p></div>
-    """,
+                f"""<div style="font-size:12px; padding: none; margin-top:30px; text-align:end; white-space: nowrap;">
+                <p>Published: <span style='font-weight: bold;'>{publish_date}</span> &nbsp; Last Updated: <span style='font-weight: bold;'>{last_updated}</span></p></div>
+                """,
                 unsafe_allow_html=True,
             )
 
@@ -205,12 +205,61 @@ def portifolio_projects():
                         ]
                         st.rerun()
 
-                @st.dialog("Cast your vote")
+                @st.dialog("Rate This Project")
                 def vote():
-                    st.write(f"Why is your favorite?")
+                    with st.form(
+                        key="contactMeForm",
+                        clear_on_submit=True,
+                        border=False,
+                    ):
+                        objective = st.text_input(
+                            label="Name",
+                            key="jkl",
+                            placeholder="Your Name e.g., John Doe",
+                            label_visibility="hidden",
+                        )
+                        email = st.text_input(
+                            label="Email",
+                            placeholder="Email: e.g, johndoe@gmail.com",
+                            label_visibility="hidden",
+                        )
+
+                        st.markdown(
+                            f'<p style = "text-align:center;">Rate this Project</p>',
+                            unsafe_allow_html=True,
+                        )
+                        rate = st.feedback(options="stars")
+                        st.write("\n")
+                        st.write("\n")
+
+                        submitted = st.form_submit_button(
+                            "Submit",
+                            help="Submit Your Rating",
+                            type="primary",
+                            icon=":material/send_money:",
+                            use_container_width=True,
+                        )
+                        if submitted:
+                            if not (objective and email and rate):
+                                st.warning(
+                                    "Ensure all mandatory fields are filled.",
+                                    icon=":material/warning:",
+                                )
+                                st.stop()
+                            else:
+                                with st.spinner("Submitting your details"):
+                                    st.write("Collecting and submitting data")
+
+                                st.write(objective)
+                                st.write(email)
+                                st.write(rate)
+                                sentiment_mapping = [1, 2, 3, 4, 5]
+                                st.markdown(
+                                    f"You selected {sentiment_mapping[rate]} star(s)."
+                                )
 
                 if st.button(
-                    label=":material/thumb_up: Rate this project",
+                    label=":material/thumb_up: Rate",
                     type="primary",
                 ):
                     vote()
@@ -232,6 +281,13 @@ def portifolio_projects():
                             "updateDate"
                         ]
                         st.rerun()
+                test_data = []
+                event = st_comments(
+                    currentUserId="01a",
+                    currentUserFullName="",
+                    commentData=test_data,
+                )
+                # st.write(event)
 
     # Main render logic
     if st.session_state.page == "projects_Cards":

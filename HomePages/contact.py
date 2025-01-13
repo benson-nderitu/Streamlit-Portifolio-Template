@@ -6,19 +6,10 @@ import streamlit as st
 # ================================================================
 def contact():
     primary_color = st.get_option("theme.primaryColor")
-    # with st.container(key="ContactMeHeaderContainer"):
-    st.markdown(
-        f"""
-            <h1 style="font-size:2.5em; padding-left:50px; line-height:0;">Contact <span style="color: {primary_color}; ">ME</span></h1>
-            <hr style = "width:16%; margin-left:35px;">
-            """,
-        unsafe_allow_html=True,
-    )
-    # st.divider()
     with st.container(key="ContactContainer"):
-        cntinfo, cntform = st.columns(2, gap="large")
-        with cntinfo:
-            with st.container(key="contactinfoContainer"):
+        cnt_info, cnt_form = st.columns(2, gap="large")
+        with cnt_info:
+            with st.container(key="contactInfoContainer"):
                 st.markdown(
                     f"""
                     <h3 style="color: {primary_color}; text-align: center;">Contact Info</span></h3>
@@ -37,8 +28,8 @@ def contact():
 
                 st.markdown(":primary[:material/globe_uk:] www.yourWebside.com")
 
-        with cntform:
-            with st.container(key="contactformContainer"):
+        with cnt_form:
+            with st.container(key="contactFormContainer"):
                 with st.form(key="contactMeForm", clear_on_submit=True, border=False):
                     objective = st.text_input(
                         label="Name",

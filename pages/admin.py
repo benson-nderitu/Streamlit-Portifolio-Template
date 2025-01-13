@@ -6,7 +6,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 
 from components.footer import Footer
-from Data.alldata import (
+from data.allData import (
     get_experiences,
     get_profile,
     get_services,
@@ -83,8 +83,8 @@ authenticator = stauth.Authenticate(
     st.secrets["cookie"]["expiry_days"],
 )
 
-_, logincol, _ = st.columns([1, 5, 1])
-with logincol:
+_, login_col, _ = st.columns([1, 5, 1])
+with login_col:
     info_container = st.empty()
     try:
         # --------------------------------------
@@ -92,8 +92,8 @@ with logincol:
         # --------------------------------------
         authenticator.login(
             fields={
-                "Form name": ":material/admin_panel_settings: &nbsp;Admin Page Login ",
-                "Login": ":primary[**Log Me In** &nbsp;&nbsp;:material/login:]",
+                "Form name": ":material/admin_panel_settings: &nbsp;Admin  Login Page",
+                "Login": ":primary[:material/login:&nbsp;&nbsp;**Log Me In**]",
                 "Username": ":material/person: &nbsp;Admin Username",
                 "Password": ":material/lock: &nbsp;Admin Password",
             },
@@ -101,7 +101,7 @@ with logincol:
             # clear_on_submit=True,
         )
     except Exception as e:
-        logincol.error(e)
+        login_col.error(e)
 if st.session_state["authentication_status"]:
     # ----------------------
     #     SIDEBAR
@@ -118,6 +118,25 @@ if st.session_state["authentication_status"]:
         )
 
         with st.container(key="NewPortfolioContainer"):
+
+            @st.dialog(title="Add New Project", width="large")
+            def new_project():
+                st.write("Adding new project....")
+
+                def vote(item):
+                    st.write(f"Why is {item} your favorite?")
+                    reason = st.text_input("Because...")
+                    if st.button("Submit"):
+                        st.session_state.vote = {"item": item, "reason": reason}
+                        st.rerun()
+
+                if "vote" not in st.session_state:
+                    st.write("Vote for your favorite")
+                    if st.button("A"):
+                        vote("A")
+                    if st.button("B"):
+                        vote("B")
+
             if st.button(
                 "New Project",
                 key="AddNewPortfolio",
@@ -125,7 +144,7 @@ if st.session_state["authentication_status"]:
                 type="primary",
                 use_container_width=True,
             ):
-                st.write("Adding New Project ...")
+                new_project()
 
             st.markdown(
                 f"""<div style= "padding:5px"></div>""",
@@ -136,20 +155,31 @@ if st.session_state["authentication_status"]:
                 "Edit Project",
                 key="EditProject",
                 icon=":material/edit:",
-                type="primary",
                 use_container_width=True,
             ):
                 st.write("Adding New Project ...")
 
         st.divider()
-        authenticator.logout(
-            button_name=":primary[**Log Out** &nbsp;&nbsp;:material/directions_run:]"
-        )
+        st.write("Are you sure to logout?")
+        if authenticator.logout(
+            ":primary[:material/directions_run: **Yes, Log Me out**]", "main"
+        ):
+            for key in [
+                "authenticated",
+                "username",
+                "name",
+                "credentials",
+                "user_credentials",
+                "authentication_status",
+            ]:
+                # if key in st.session_state:
+                del st.session_state[key]
+                st.rerun()
 
     # ================================================================
     #        MAIN ADMIN PAGE
     # ================================================================
-    # st.subheader("Settings")
+    st.subheader(":material/settings: Settings")
 
     # ----------------------------------------------------------------
     #    PROFILE CONFIG
@@ -190,6 +220,7 @@ if st.session_state["authentication_status"]:
                     "Apply Changes",
                     icon=":material/update:",
                     type="primary",
+                    help="Save and Apply the Changes",
                 )
 
                 if submitted:
@@ -231,7 +262,7 @@ if st.session_state["authentication_status"]:
                 label="Apply Changes",
                 icon=":material/update:",
                 type="primary",
-                help="Apply changes and save them to the database",
+                help="Save and Apply the Changes",
                 key="services_savebutton_key",
             ):
                 if "my_key" in st.session_state:
@@ -282,16 +313,17 @@ if st.session_state["authentication_status"]:
                 new_title = st.text_input("Title", value=title)
                 new_header = st.text_area("Header", value=header)
                 new_body = st.text_area("Body", value=body)
-                new_closingtag = st.text_area("Remarks", value=closingtag)
+                new_closingTag = st.text_area("Remarks", value=closingtag)
                 submitted = st.form_submit_button(
                     "Apply Changes",
                     icon=":material/update:",
                     type="primary",
+                    help="Save and Apply the Changes",
                 )
 
                 if submitted:
                     update_skillDescription(
-                        new_title, new_header, new_body, new_closingtag
+                        new_title, new_header, new_body, new_closingTag
                     )
                     with st.spinner("Updating..."):
                         time.sleep(1)
@@ -319,7 +351,7 @@ if st.session_state["authentication_status"]:
                 label="Apply Changes",
                 icon=":material/update:",
                 type="primary",
-                help="Apply changes and save them to the database",
+                help="Save and Apply the Changes",
                 key="skills_savebutton_key",
             ):
                 if "skills_key" in st.session_state:
@@ -377,7 +409,7 @@ if st.session_state["authentication_status"]:
                 label="Apply Changes",
                 icon=":material/update:",
                 type="primary",
-                help="Apply changes and save them to the database",
+                help="Save and Apply the Changes",
                 key="experiences_savebutton_key",
             ):
                 if "experiences_key" in st.session_state:
@@ -437,7 +469,7 @@ if st.session_state["authentication_status"]:
                 label="Apply Changes",
                 icon=":material/update:",
                 type="primary",
-                help="Apply changes and save them to the database",
+                help="Save and Apply the Changes",
                 key="testimonials_savebutton_key",
             ):
                 if "testimonials_key" in st.session_state:
@@ -504,7 +536,7 @@ if st.session_state["authentication_status"]:
                 label="Apply Changes",
                 icon=":material/update:",
                 type="primary",
-                help="Apply changes and save them to the database",
+                help="Save and Apply the Changes",
                 key="socialLinks_savebutton_key",
             ):
                 if "socialLinks_key" in st.session_state:
@@ -545,7 +577,9 @@ if st.session_state["authentication_status"]:
                     st.cache_data.clear()
                     st.rerun()
 
-    # Render the ADMIN Sections============================
+# ====================================
+#     Render the ADMIN Sections
+# ====================================
     profile()
     services()
     skills_description()
@@ -555,8 +589,9 @@ if st.session_state["authentication_status"]:
     social_links()
     Footer()
 
+
 elif st.session_state["authentication_status"] is False:
-    logincol.error("Username/password is incorrect")
+    login_col.error("Username/password is incorrect")
 elif st.session_state["authentication_status"] is None:
     info_container.success(
         "Please enter Your Username and Password to access the Admin Page",

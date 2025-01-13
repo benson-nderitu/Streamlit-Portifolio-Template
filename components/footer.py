@@ -1,16 +1,21 @@
-import streamlit as st
 from datetime import datetime
+
+import streamlit as st
 import streamlit_antd_components as sac
-from Data.alldata import get_social_links
+
+from data.allData import get_social_links
+
 
 # ----------------------------------------------------------------
 #    FOOTER
 # ----------------------------------------------------------------
 @st.fragment
 def Footer():
-    with st.container(key="FooterContainer",):
-        st.markdown(f"""<hr style = "padding-bottom:1px">""",unsafe_allow_html=True)
-        _, centrecol, _ = st.columns(
+    with st.container(
+        key="FooterContainer",
+    ):
+        st.markdown(f"""<hr style = "padding-bottom:1px">""", unsafe_allow_html=True)
+        _, centre_col, _ = st.columns(
             [
                 1,
                 2,
@@ -18,10 +23,10 @@ def Footer():
             ],
             gap="large",
         )
-        with centrecol:
+        with centre_col:
             with st.container(key="FooterTitle"):
-                nameextract = st.secrets["credentials"]["usernames"]
-                for username, details in nameextract.items():
+                name_extract = st.secrets["credentials"]["usernames"]
+                for username, details in name_extract.items():
                     full_name = details["name"]
                     st.markdown(
                         f"""
@@ -59,4 +64,4 @@ def Footer():
                 """,
                 unsafe_allow_html=True,
             )
-        st.markdown(f"""<hr>""",unsafe_allow_html=True)
+        st.markdown(f"""<hr>""", unsafe_allow_html=True)
